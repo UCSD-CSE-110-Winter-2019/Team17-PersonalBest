@@ -11,9 +11,9 @@ jobs:
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
 #     Uncomment the following run block, if permissions for gradlew fail on CircleCI:
-#      - run:
-#         name: Chmod permissions 
-#         command: sudo chmod +x ./gradlew
+      - run:
+         name: Chmod permissions 
+         command: sudo chmod +x ./gradlew
 #
 #     You can also run “sudo chmod +x ./gradlew” locally and push the change. 
 #     If you are not on a unix system, run: “git update-index --chmod=+x gradlew” instead and push the changed file
