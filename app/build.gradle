@@ -22,6 +22,11 @@ android {
     lintOptions{
         disable 'GradleCompatible'
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -33,6 +38,7 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-vector-drawable:28.0.0'
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:4.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     //compile 'com.google.android.gms:play-services-fitness:16.0.1'
