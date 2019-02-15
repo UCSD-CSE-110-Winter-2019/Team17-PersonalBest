@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.team17_personalbest.MainActivity;
 import com.example.team17_personalbest.StepCountActivity;
 
 public class FitnessServiceFactory {
@@ -17,12 +18,12 @@ public class FitnessServiceFactory {
         blueprints.put(key, bluePrint);
     }
 
-    public static FitnessService create(String key, StepCountActivity stepCountActivity) {
+    public static FitnessService create(String key, MainActivity activity) {
         Log.i(TAG, String.format("creating FitnessService with key %s", key));
-        return blueprints.get(key).create(stepCountActivity);
+        return blueprints.get(key).create(activity);
     }
 
     public interface BluePrint {
-        FitnessService create(StepCountActivity stepCountActivity);
+        FitnessService create(MainActivity activity);
     }
 }
