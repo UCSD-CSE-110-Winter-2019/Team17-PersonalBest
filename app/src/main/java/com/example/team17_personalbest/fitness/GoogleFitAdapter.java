@@ -93,9 +93,9 @@ public class GoogleFitAdapter implements FitnessService {
                     public void onSuccess(DataSet dataSet) {
                         Log.d(TAG, dataSet.toString());
                         long total =
-                                dataSet.isEmpty()
-                                        ? 0
-                                        : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
+                            dataSet.isEmpty()
+                                ? 0
+                                : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
                         // update the step count in User class, which will notify
                         // all Observers classes
                         user.updateDailySteps(total);

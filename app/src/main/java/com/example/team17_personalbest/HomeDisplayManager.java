@@ -22,6 +22,7 @@ public class HomeDisplayManager implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         User user = (User) arg;
+        //TODO: use format string instead
         dailySteps.setText(Integer.toString(user.getTotalDailySteps()));
         dailyGoal.setText("/" + Integer.toString(user.getGoal()));
     }
