@@ -3,6 +3,8 @@ package com.example.team17_personalbest.fitness;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.team17_personalbest.MainActivity;
+import com.example.team17_personalbest.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.fitness.Fitness;
@@ -19,10 +21,12 @@ public class GoogleFitAdapter implements FitnessService {
     private final int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = System.identityHashCode(this) & 0xFFFF;
     private final String TAG = "GoogleFitAdapter";
 
-    private StepCountActivity activity;
+    private MainActivity activity;
+    private User user;
 
-    public GoogleFitAdapter(StepCountActivity activity) {
+    public GoogleFitAdapter(MainActivity activity, User user) {
         this.activity = activity;
+        this.user = user;
     }
 
 
@@ -89,7 +93,7 @@ public class GoogleFitAdapter implements FitnessService {
                                                 ? 0
                                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
 
-                                activity.setStepCount(total);
+                                user.updateDailySteps(total);
                                 Log.d(TAG, "Total steps: " + total);
                             }
                         })

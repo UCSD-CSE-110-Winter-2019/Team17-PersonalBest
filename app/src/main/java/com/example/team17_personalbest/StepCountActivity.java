@@ -33,7 +33,7 @@ public class StepCountActivity extends AppCompatActivity {
         textSteps = findViewById(R.id.textSteps);
 
         String fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
-        fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
+        //fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
 
         Button btnUpdateSteps = findViewById(R.id.buttonUpdateSteps);
         btnUpdateSteps.setOnClickListener(new View.OnClickListener() {
