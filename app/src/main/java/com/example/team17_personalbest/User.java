@@ -2,6 +2,7 @@ package com.example.team17_personalbest;
 
 import android.util.Log;
 
+import java.util.Calendar;
 import java.util.Observable;
 
 public class User extends Observable {
@@ -61,15 +62,15 @@ public class User extends Observable {
     /**
      * Description: Starts a PlannedWalk by initializing a new PlannedWalk
      */
-    public void startPlannedWalk(){
-        this.currentWalk = new TempPlannedWalk();
+    public void startPlannedWalk() {
+        this.currentWalk = new PlannedWalk(this.height, Calendar.getInstance().getTimeInMillis());
     }
 
 
     /**
      * Description: Ends a PlannedWalk by setting currentWalk to null
      */
-    public void endPlannedWalk(IPlannedWalk plannedWalk){
+    public void endPlannedWalk(IPlannedWalk plannedWalk) {
         this.currentWalk = null;
     }
 
