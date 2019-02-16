@@ -16,8 +16,10 @@ import com.example.team17_personalbest.fitness.FitnessService;
 import com.example.team17_personalbest.fitness.FitnessServiceFactory;
 import com.example.team17_personalbest.fitness.GoogleFitAdapter;
 
+import java.text.DecimalFormat;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private String fitnessServiceKey = "GOOGLE_FIT";
@@ -52,17 +54,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // start walk button controller
-        Button startWalking = findViewById(R.id.start_walk);
-        startWalking.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: start recording walk
-            }
-        });
+
 
         // Manage steps and goal displays with HomeDisplayManager
-        TextView currSteps = findViewById(R.id.curr_steps);
+        final TextView currSteps = findViewById(R.id.curr_steps);
         TextView dailyGoal = findViewById(R.id.daily_goal);
         HomeDisplayManager homeDisplayManager = new HomeDisplayManager(currSteps, dailyGoal);
         user = new User(100);
@@ -81,6 +76,34 @@ public class MainActivity extends AppCompatActivity {
         });
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
         fitnessService.setup();
+
+        // start walk button controller
+        final TextView clock = findViewById(R.id.clock);
+        final TextView speed = findViewById(R.id.speed);
+        final TextView plannedSteps = findViewById(R.id.walk_steps);
+        final Button startWalking = findViewById(R.id.start_walk);
+        startWalking.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                IPlannedWalk currWalk = user.getCurrentWalk();
+                if(currWalk == null) {
+                    user.startPlannedWalk();
+                    startWalking.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    startWalking.setText(getResources().getString(R.string.button_end));
+                }else{
+                    user.endPlannedWalk(currWalk);
+                    startWalking.setBackgroundColor(getResources().getColor(R.color.colorGreen));
+                    startWalking.setText(getResources().getString(R.string.button_start));
+                    clock.setText("");
+                    speed.setText("");
+                    plannedSteps.setText("");
+                }
+            }
+        });
+
+
+        // update normal and planned walk steps
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -89,10 +112,33 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         fitnessService.updateStepCount();
+
+                        // update planned walk text views
+                        IPlannedWalk currWalk = user.getCurrentWalk();
+                        if(currWalk != null){
+                            // get planned walk steps
+                            String currWalkSteps = "" + currWalk.getSteps();
+                            plannedSteps.setText(currWalkSteps);
+
+                            // get and format speed
+                            DecimalFormat df = new DecimalFormat();
+                            df.setMaximumFractionDigits(1);
+                            String currWalkSpeed = "" + df.format(currWalk.getSpeed()) + " mph";
+                            speed.setText(currWalkSpeed);
+
+                            // get and format time
+                            df.setMinimumIntegerDigits(2);
+                            long currWalkSeconds = TimeUnit.MILLISECONDS.toSeconds(currWalk.getTime());
+                            long minutes = currWalkSeconds/60;
+                            long seconds = currWalkSeconds - (minutes * 60);
+                            String currWalkTime = "" + df.format(minutes) + ":" + df.format(seconds);
+                            clock.setText(currWalkTime);
+                        }
                     }
                 });
             }
         }, 0, 1000);
+
     }
 
     @Override

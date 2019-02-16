@@ -46,7 +46,7 @@ public class PlannedWalk implements IPlannedWalk, Observer {
 
     // returns speed in miles per hour
     private float calculateSpeed() {
-        return distance / (((time - startTime) / (1000*60*60)));
+        return distance / (((float)(time - startTime) / (1000*60*60)));
     }
 
     // convert height to stride length in miles
@@ -66,6 +66,10 @@ public class PlannedWalk implements IPlannedWalk, Observer {
 
     public float getDistance() {
         return this.distance;
+    }
+
+    public long getTime(){
+        return (this.time - this.startTime);
     }
 
     @Override
