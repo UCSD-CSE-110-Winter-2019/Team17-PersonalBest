@@ -63,4 +63,9 @@ public class StepHistory {
         }
     }
 
+    // TODO: get yesterday's step count
+    public int getYesterdayStep () {
+        return 1;
+    }
+
 }

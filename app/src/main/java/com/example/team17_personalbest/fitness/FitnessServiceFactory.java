@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.example.team17_personalbest.MainActivity;
-import com.example.team17_personalbest.StepCountActivity;
 
 public class FitnessServiceFactory {
 

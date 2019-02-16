@@ -20,61 +20,57 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
-    private static final String TAG = "MainActivity";
     private String fitnessServiceKey = "GOOGLE_FIT";
+    private static final String TAG = "MainActivity";
     private TextView mTextMessage;
-    private HomeDisplayManager homeDisplayManager;
     private User user;
     private FitnessService fitnessService;
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // navigation bar controller
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-
-
-        //TODO Remove? and remove StepCountActivity?
-        Button btnGoToSteps = findViewById(R.id.start_walk);
-        btnGoToSteps.setOnClickListener(new View.OnClickListener() {
+        navigation.setOnNavigationItemSelectedListener(
+            // Switching between home screen and history
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                launchStepCountActivity();
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_home:
+                        mTextMessage.setText(R.string.title_home);
+                        return true;
+                    case R.id.navigation_dashboard:
+                        mTextMessage.setText(R.string.title_dashboard);
+                        launchHistory();
+                        return true;
+                }
+                return false;
             }
         });
 
+        // start walk button controller
+        Button startWalking = findViewById(R.id.start_walk);
+        startWalking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: start recording walk
+            }
+        });
 
-
-        // Manage steps and goal displays
+        // Manage steps and goal displays with HomeDisplayManager
         TextView currSteps = findViewById(R.id.curr_steps);
         TextView dailyGoal = findViewById(R.id.daily_goal);
-        homeDisplayManager = new HomeDisplayManager(currSteps, dailyGoal);
+        HomeDisplayManager homeDisplayManager = new HomeDisplayManager(currSteps, dailyGoal);
         user = new User(100);
         user.addObserver(homeDisplayManager);
 
+        ProgressService progressService = new ProgressService(MainActivity.this);
+        user.addObserver(progressService);
+        //TODO: reset progress in progressService to 0 at midnight
 
         // Create fitness service
         FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
@@ -97,19 +93,12 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0, 1000);
-
     }
-
-    public void launchStepCountActivity() {
-        Intent intent = new Intent(this, StepCountActivity.class);
-        intent.putExtra(StepCountActivity.FITNESS_SERVICE_KEY, fitnessServiceKey);
-        startActivity(intent);
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//       If authentication was required during google fit setup, this will be called after the user authenticates
+        // If authentication was required during google fit setup, this will
+        // be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
                 fitnessService.updateStepCount();
@@ -119,5 +108,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Display step history
+    public void launchHistory() {
+        Intent intent = new Intent(this, StepHistory.class);
+        startActivity(intent);
+    }
+
+    // setter for tests
+    public void setFitnessServiceKey(String fitnessServiceKey) {
+        this.fitnessServiceKey = fitnessServiceKey;
+    }
 
 }
