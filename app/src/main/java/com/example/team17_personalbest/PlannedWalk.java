@@ -46,7 +46,8 @@ public class PlannedWalk implements IPlannedWalk, Observer {
 
     // returns speed in miles per hour
     private float calculateSpeed() {
-        return distance / (((time - startTime) / (1000*60*60)));
+        this.time = Calendar.getInstance().getTimeInMillis();
+        return distance / (((float)(time - startTime) / (1000*60*60)));
     }
 
     // convert height to stride length in miles
