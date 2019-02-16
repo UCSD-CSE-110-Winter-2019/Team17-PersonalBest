@@ -9,6 +9,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -21,6 +23,7 @@ android {
     }
     lintOptions{
         disable 'GradleCompatible'
+
     }
     testOptions {
         unitTests {
@@ -41,6 +44,8 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
     //compile 'com.google.android.gms:play-services-fitness:16.0.1'
     //compile 'com.google.android.gms:play-services-auth:16.0.1'
 }

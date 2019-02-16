@@ -2,8 +2,9 @@
     <string name="app_name">Personal Best</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">History</string>
-    <string name="current_steps">15</string>
+    <string name="current_steps">Loading</string>
     <string name="daily_goal">/5000</string>
     <string name="button_start">start walk/run</string>
+    <string name="button_end">end walk/run</string>
     <string name="new_goal">New Goal</string>
 </resources>
