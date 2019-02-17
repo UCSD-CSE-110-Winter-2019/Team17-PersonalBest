@@ -54,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.navigation_home:
-                                mTextMessage.setText(R.string.title_home);
+                                //mTextMessage.setText(R.string.title_home);
                                 return true;
                             case R.id.navigation_dashboard:
-                                mTextMessage.setText(R.string.title_dashboard);
+                                //mTextMessage.setText(R.string.title_dashboard);
                                 launchHistory();
                                 return true;
                         }
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Display step history
     public void launchHistory() {
-        Intent intent = new Intent(this, StepHistory.class);
+        Intent intent = new Intent(this, ShowHistoryActivity.class);
         startActivity(intent);
     }
 
