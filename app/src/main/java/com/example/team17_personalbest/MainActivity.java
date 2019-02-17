@@ -27,6 +27,7 @@ import com.example.team17_personalbest.fitness.GoogleFitAdapter;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         // Create user and add observers
         loadUser();
         if (user == null) {
-            user = new User(70);
+            user = new User(70, Calendar.getInstance());
             displayHeightPrompt();
         }
         user.addObserver(homeDisplayManager);
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PlannedWalk currWalk = user.getCurrentWalk();
                 if(currWalk == null) {
-                    user.startPlannedWalk();
+                    user.startPlannedWalk(Calendar.getInstance());
                 }else{
                     user.endPlannedWalk();
                 }

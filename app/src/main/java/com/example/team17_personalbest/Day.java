@@ -10,8 +10,7 @@ public class Day {
     private int normalSteps;
 
 
-    public Day(){
-        Calendar calendar = Calendar.getInstance();
+    public Day(Calendar calendar){
         day = calendar.get(Calendar.DAY_OF_WEEK);
         plannedSteps = 0;
         normalSteps = 0;
@@ -23,7 +22,7 @@ public class Day {
         normalSteps = 0;
     }
 
-    public String getDay(){
+    public String getDayString(){
         String currDay;
         currDay = "ERROR!";
         switch(day) {
@@ -53,6 +52,8 @@ public class Day {
         return currDay;
     }
 
+
+
     public int getNormalSteps() {
         return normalSteps;
     }
@@ -77,4 +78,7 @@ public class Day {
         this.plannedSteps += plannedSteps;
     }
 
+    public int getDay() {
+        return day;
+    }
 }

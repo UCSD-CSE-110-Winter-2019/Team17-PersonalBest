@@ -1,7 +1,7 @@
 package com.example.team17_personalbest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Calendar;
 
 public class StepHistory {
 
@@ -19,7 +19,7 @@ public class StepHistory {
         Day[] result = new Day[7];
         int DAY_NUM = 7;
 
-        Day init = new Day();
+        Day init = new Day(Calendar.getInstance());
         for(int i = 0; i < DAY_NUM; i++){
             result[i] = new Day(i+1);
         }
@@ -39,7 +39,7 @@ public class StepHistory {
     }
 
     private int findDay(Day day){
-        switch(day.getDay()){
+        switch(day.getDayString()){
             case "Sunday":
                 return 0;
             case "Monday":
@@ -59,7 +59,7 @@ public class StepHistory {
 
     public void printHist(){
         for(int i = 0; i < hist.size(); i++){
-            System.out.println(hist.get(i).getDay() + ", " + hist.get(i).getPlannedSteps() + ", " + hist.get(i).getNormalSteps());
+            System.out.println(hist.get(i).getDayString() + ", " + hist.get(i).getPlannedSteps() + ", " + hist.get(i).getNormalSteps());
         }
     }
 

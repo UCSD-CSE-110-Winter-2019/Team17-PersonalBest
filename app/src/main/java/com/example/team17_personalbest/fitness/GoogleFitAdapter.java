@@ -15,6 +15,8 @@ import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.Calendar;
+
 public class GoogleFitAdapter implements FitnessService {
     private final int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = System.identityHashCode(this) & 0xFFFF;
     private final String TAG = "GoogleFitAdapter";
@@ -98,7 +100,7 @@ public class GoogleFitAdapter implements FitnessService {
                                 : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
                         // update the step count in User class, which will notify
                         // all Observers classes
-                        user.updateDailySteps(total);
+                        user.updateDailySteps(total, Calendar.getInstance());
                         Log.d(TAG, "Total steps: " + total);
                     }
                 })
