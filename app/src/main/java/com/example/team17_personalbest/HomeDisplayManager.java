@@ -39,7 +39,7 @@ public class HomeDisplayManager implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         User user = (User) arg;
-        IPlannedWalk plannedWalk = user.getCurrentWalk();
+        PlannedWalk plannedWalk = user.getCurrentWalk();
 
         // Daily steps and goal
         dailySteps.setText(String.format(Locale.US,"%d", user.getTotalDailySteps()));
@@ -47,6 +47,8 @@ public class HomeDisplayManager implements Observer {
 
         // Planned walk displays
         if (plannedWalk != null){
+            startWalk();
+
             // get planned walk steps
             String currWalkSteps = "" + plannedWalk.getSteps() + " steps";
             walkSteps.setText(currWalkSteps);
@@ -68,6 +70,8 @@ public class HomeDisplayManager implements Observer {
             long seconds = currWalkSeconds - (minutes * 60);
             String currWalkTime = "" + df.format(minutes) + ":" + df.format(seconds);
             walkClock.setText(currWalkTime);
+        } else{
+            endWalk();
         }
     }
 

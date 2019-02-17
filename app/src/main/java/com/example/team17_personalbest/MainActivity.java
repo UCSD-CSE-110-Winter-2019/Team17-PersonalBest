@@ -1,9 +1,14 @@
+/**
+ * Uses GSON Library with Apache License
+ */
+
 package com.example.team17_personalbest;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -19,6 +24,7 @@ import android.widget.TextView;
 import com.example.team17_personalbest.fitness.FitnessService;
 import com.example.team17_personalbest.fitness.FitnessServiceFactory;
 import com.example.team17_personalbest.fitness.GoogleFitAdapter;
+import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
 import java.util.Timer;
@@ -31,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private User user;
     private FitnessService fitnessService;
-    String m_Text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +65,22 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // Manage steps and goal displays with HomeDisplayManager
-        final TextView currSteps = findViewById(R.id.curr_steps);
+        TextView currSteps = findViewById(R.id.curr_steps);
         TextView dailyGoal = findViewById(R.id.daily_goal);
-        final TextView walkSteps = findViewById(R.id.walk_steps);
+        TextView walkSteps = findViewById(R.id.walk_steps);
         TextView walkDistance = findViewById(R.id.walk_distance);
-        final TextView walkSpeed = findViewById(R.id.walk_speed);
-        final TextView walkClock = findViewById(R.id.clock);
+        TextView walkSpeed = findViewById(R.id.walk_speed);
+        TextView walkClock = findViewById(R.id.clock);
         Button walkButton = findViewById(R.id.start_walk);
         final HomeDisplayManager homeDisplayManager = new HomeDisplayManager(currSteps, dailyGoal,
                 walkSteps, walkDistance, walkSpeed, walkClock, walkButton, this);
-        user = new User(100);
+
+        // Create user and add observers
+        loadUser();
+        if (user == null) {
+            user = new User(70);
+            displayHeightPrompt();
+        }
         user.addObserver(homeDisplayManager);
 
         // Manage encouragements with ProgressService
@@ -92,14 +103,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                IPlannedWalk currWalk = user.getCurrentWalk();
+                PlannedWalk currWalk = user.getCurrentWalk();
                 if(currWalk == null) {
                     user.startPlannedWalk();
-                    homeDisplayManager.startWalk();
                 }else{
                     user.endPlannedWalk();
-                    homeDisplayManager.endWalk();
                 }
+            }
+        });
+
+        // set goal button controller
+        Button setGoal = findViewById(R.id.create_goal);
+        setGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayNewGoalPrompt();
             }
         });
 
@@ -112,19 +130,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         fitnessService.updateStepCount();
+                        saveUser();
                     }
                 });
             }
         }, 0, 1000);
-
-        // set goal button controller
-        Button setGoal = findViewById(R.id.create_goal);
-        setGoal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                displayNewGoalPrompt();
-            }
-        });
     }
 
     @Override
@@ -159,15 +169,22 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("Set Goal");
 
         // Set up user input
-        final EditText userInput = new EditText(this);
-        userInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-        builder.setView(userInput);
+        final EditText dialogInput = new EditText(this);
+        dialogInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+        dialogInput.setHint("Enter number of steps / Confirm the default 5000 steps");
+        dialogInput.setTextSize(10);
+        builder.setView(dialogInput);
 
-        // Set goal button controller
+        // Confirm button controller
         builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int newGoal = Integer.parseInt(userInput.getText().toString());
+                int newGoal;
+                if (dialogInput.getText().toString().equals("")){
+                    newGoal = 5000;
+                } else {
+                    newGoal = Integer.parseInt(dialogInput.getText().toString());
+                }
                 user.setGoal(newGoal);
             }
         });
@@ -181,6 +198,63 @@ public class MainActivity extends AppCompatActivity {
         });
 
         builder.show();
+    }
+
+    /**
+     * Creates a popup for setting height
+     */
+    public void displayHeightPrompt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Set Height");
+
+        // Set up user input
+        final EditText dialogInput = new EditText(this);
+        dialogInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+        dialogInput.setHint("Enter height in inches / Confirm the default 70 inches");
+        dialogInput.setTextSize(10);
+        builder.setView(dialogInput);
+
+        // Confirm button controller
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int height;
+                if (dialogInput.getText().toString().equals("")){
+                    height = 70;
+                } else {
+                    height = Integer.parseInt(dialogInput.getText().toString());
+                }
+                user.setHeight(height);
+            }
+        });
+
+        builder.show();
+    }
+
+    /**
+     * Saves the user settings and history into sharedPreferences
+     */
+    public void saveUser() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        SharedPreferences.Editor edit = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String userjson = gson.toJson(user);
+        edit.putString("user", userjson);
+        edit.apply();
+    }
+
+    /**
+     * Loads the user settings and history from sharedPreferences
+     */
+    public void loadUser() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String userjson = sharedPreferences.getString("user", "");
+        if (userjson.equals("")){
+            user = null;
+        } else {
+            user = new User(gson.fromJson(userjson, User.class));
+        }
     }
 
 }

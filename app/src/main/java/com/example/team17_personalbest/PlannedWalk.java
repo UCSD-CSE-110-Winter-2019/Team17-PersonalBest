@@ -4,7 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Calendar;
 
-public class PlannedWalk implements IPlannedWalk {
+public class PlannedWalk {
 
     int steps;
     float distance;

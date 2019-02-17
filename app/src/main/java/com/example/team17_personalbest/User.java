@@ -7,7 +7,7 @@ public class User extends Observable {
     private int height;
     private int goal;
     private int totalDailySteps;
-    private IPlannedWalk currentWalk;
+    private PlannedWalk currentWalk;
     private StepHistory stepHistory;
     private Day currentDayStats;
 
@@ -21,9 +21,22 @@ public class User extends Observable {
         super();
         this.height = height;
         this.goal = 5000;
-        totalDailySteps = 0;
+        this.totalDailySteps = 0;
         this.stepHistory = new StepHistory();
         this.currentDayStats = new Day();
+    }
+
+
+    /** Copy constructor */
+    public User(User other){
+        super();
+        this.height = other.height;
+        this.goal = other.goal;
+        this.totalDailySteps = other.totalDailySteps;
+        this.currentWalk = other.currentWalk;
+        this.stepHistory = other.stepHistory;
+        this.currentDayStats = other.currentDayStats;
+
     }
 
 
@@ -62,6 +75,8 @@ public class User extends Observable {
      */
     public void startPlannedWalk() {
         this.currentWalk = new PlannedWalk(this.height, Calendar.getInstance().getTimeInMillis());
+        setChanged();
+        notifyObservers(this);
     }
 
 
@@ -70,6 +85,8 @@ public class User extends Observable {
      */
     public void endPlannedWalk() {
         this.currentWalk = null;
+        setChanged();
+        notifyObservers(this);
     }
 
 
@@ -98,7 +115,7 @@ public class User extends Observable {
         return totalDailySteps;
     }
 
-    public IPlannedWalk getCurrentWalk() {
+    public PlannedWalk getCurrentWalk() {
         return currentWalk;
     }
 
