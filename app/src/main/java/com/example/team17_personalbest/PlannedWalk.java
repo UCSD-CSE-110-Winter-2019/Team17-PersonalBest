@@ -4,7 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Calendar;
 
-public class PlannedWalk implements IPlannedWalk, Observer {
+public class PlannedWalk implements IPlannedWalk {
 
     int steps;
     float distance;
@@ -46,6 +46,7 @@ public class PlannedWalk implements IPlannedWalk, Observer {
 
     // returns speed in miles per hour
     private float calculateSpeed() {
+        this.time = Calendar.getInstance().getTimeInMillis();
         return distance / (((float)(time - startTime) / (1000*60*60)));
     }
 
@@ -70,10 +71,5 @@ public class PlannedWalk implements IPlannedWalk, Observer {
 
     public long getTime(){
         return (this.time - this.startTime);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        User user = (User) arg;
     }
 }

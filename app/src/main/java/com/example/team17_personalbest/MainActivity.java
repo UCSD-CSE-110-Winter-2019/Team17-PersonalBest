@@ -1,15 +1,19 @@
 package com.example.team17_personalbest;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.team17_personalbest.fitness.FitnessService;
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
     private User user;
     private FitnessService fitnessService;
+    String m_Text;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,32 +42,37 @@ public class MainActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
-            // Switching between home screen and history
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_home:
-                        mTextMessage.setText(R.string.title_home);
-                        return true;
-                    case R.id.navigation_dashboard:
-                        mTextMessage.setText(R.string.title_dashboard);
-                        launchHistory();
-                        return true;
-                }
-                return false;
-            }
-        });
-
-
+                // Switching between home screen and history
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.navigation_home:
+                                mTextMessage.setText(R.string.title_home);
+                                return true;
+                            case R.id.navigation_dashboard:
+                                mTextMessage.setText(R.string.title_dashboard);
+                                launchHistory();
+                                return true;
+                        }
+                        return false;
+                    }
+                });
 
         // Manage steps and goal displays with HomeDisplayManager
         final TextView currSteps = findViewById(R.id.curr_steps);
         TextView dailyGoal = findViewById(R.id.daily_goal);
-        HomeDisplayManager homeDisplayManager = new HomeDisplayManager(currSteps, dailyGoal);
+        final TextView walkSteps = findViewById(R.id.walk_steps);
+        TextView walkDistance = findViewById(R.id.walk_distance);
+        final TextView walkSpeed = findViewById(R.id.walk_speed);
+        final TextView walkClock = findViewById(R.id.clock);
+        Button walkButton = findViewById(R.id.start_walk);
+        final HomeDisplayManager homeDisplayManager = new HomeDisplayManager(currSteps, dailyGoal,
+                walkSteps, walkDistance, walkSpeed, walkClock, walkButton, this);
         user = new User(100);
         user.addObserver(homeDisplayManager);
 
+        // Manage encouragements with ProgressService
         ProgressService progressService = new ProgressService(MainActivity.this);
         user.addObserver(progressService);
         //TODO: reset progress in progressService to 0 at midnight
@@ -78,32 +88,22 @@ public class MainActivity extends AppCompatActivity {
         fitnessService.setup();
 
         // start walk button controller
-        final TextView clock = findViewById(R.id.clock);
-        final TextView speed = findViewById(R.id.speed);
-        final TextView plannedSteps = findViewById(R.id.walk_steps);
-        final Button startWalking = findViewById(R.id.start_walk);
-        startWalking.setOnClickListener(new View.OnClickListener() {
+        walkButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 IPlannedWalk currWalk = user.getCurrentWalk();
                 if(currWalk == null) {
                     user.startPlannedWalk();
-                    startWalking.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                    startWalking.setText(getResources().getString(R.string.button_end));
+                    homeDisplayManager.startWalk();
                 }else{
-                    user.endPlannedWalk(currWalk);
-                    startWalking.setBackgroundColor(getResources().getColor(R.color.colorGreen));
-                    startWalking.setText(getResources().getString(R.string.button_start));
-                    clock.setText("");
-                    speed.setText("");
-                    plannedSteps.setText("");
+                    user.endPlannedWalk();
+                    homeDisplayManager.endWalk();
                 }
             }
         });
 
-
-        // update normal and planned walk steps
+        // update normal and planned walk steps every second
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -112,33 +112,19 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         fitnessService.updateStepCount();
-
-                        // update planned walk text views
-                        IPlannedWalk currWalk = user.getCurrentWalk();
-                        if(currWalk != null){
-                            // get planned walk steps
-                            String currWalkSteps = "" + currWalk.getSteps();
-                            plannedSteps.setText(currWalkSteps);
-
-                            // get and format speed
-                            DecimalFormat df = new DecimalFormat();
-                            df.setMaximumFractionDigits(1);
-                            String currWalkSpeed = "" + df.format(currWalk.getSpeed()) + " mph";
-                            speed.setText(currWalkSpeed);
-
-                            // get and format time
-                            df.setMinimumIntegerDigits(2);
-                            long currWalkSeconds = TimeUnit.MILLISECONDS.toSeconds(currWalk.getTime());
-                            long minutes = currWalkSeconds/60;
-                            long seconds = currWalkSeconds - (minutes * 60);
-                            String currWalkTime = "" + df.format(minutes) + ":" + df.format(seconds);
-                            clock.setText(currWalkTime);
-                        }
                     }
                 });
             }
         }, 0, 1000);
 
+        // set goal button controller
+        Button setGoal = findViewById(R.id.create_goal);
+        setGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayNewGoalPrompt();
+            }
+        });
     }
 
     @Override
@@ -163,6 +149,38 @@ public class MainActivity extends AppCompatActivity {
     // setter for tests
     public void setFitnessServiceKey(String fitnessServiceKey) {
         this.fitnessServiceKey = fitnessServiceKey;
+    }
+
+    /**
+     * Creates a popup that lets the user set a new goal
+     */
+    public void displayNewGoalPrompt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Set Goal");
+
+        // Set up user input
+        final EditText userInput = new EditText(this);
+        userInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(userInput);
+
+        // Set goal button controller
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int newGoal = Integer.parseInt(userInput.getText().toString());
+                user.setGoal(newGoal);
+            }
+        });
+
+        // Cancel button controller
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
 }

@@ -5,4 +5,5 @@ public interface IPlannedWalk {
     public int getSteps();
     public float getSpeed();
     public long getTime();
+    public float getDistance();
 }
