@@ -37,5 +37,20 @@ public class StepHistoryTest {
 
     }
 
+    @Test
+    public void test_getYesterdayStep(){
+        StepHistory stepHistory = new StepHistory();
+        int numDays = 7;
+
+        for(int i = 0; i < numDays; i++){
+            Day day = new Day((i%7) + 1);
+            day.setPlannedSteps(i+1);
+            day.setNormalSteps(i);
+            stepHistory.updateHist(day);
+        }
+
+        assertEquals(stepHistory.getYesterdayStep(), 11);
+    }
+
 
 }

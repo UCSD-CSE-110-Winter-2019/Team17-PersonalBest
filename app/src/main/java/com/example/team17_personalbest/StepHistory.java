@@ -63,9 +63,11 @@ public class StepHistory {
         }
     }
 
-    // TODO: get yesterday's step count
     public int getYesterdayStep () {
-        return 1;
+        if (hist.size() < 2)
+            return -1;
+        Day yesterday = hist.get(hist.size()-2);
+        return yesterday.getNormalSteps() + yesterday.getPlannedSteps();
     }
 
 }

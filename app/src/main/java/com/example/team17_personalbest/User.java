@@ -10,6 +10,8 @@ public class User extends Observable {
     private PlannedWalk currentWalk;
     private StepHistory stepHistory;
     private Day currentDayStats;
+    private boolean hasBeenEncouragedToday;
+    private boolean hasBeenCongratulatedToday;
 
     /**
      * Constructor
@@ -24,6 +26,9 @@ public class User extends Observable {
         this.totalDailySteps = 0;
         this.stepHistory = new StepHistory();
         this.currentDayStats = new Day(calendar);
+        this.stepHistory.updateHist(currentDayStats);
+        this.hasBeenEncouragedToday = false;
+        this.hasBeenCongratulatedToday = false;
     }
 
 
@@ -36,7 +41,8 @@ public class User extends Observable {
         this.currentWalk = other.currentWalk;
         this.stepHistory = other.stepHistory;
         this.currentDayStats = other.currentDayStats;
-
+        this.hasBeenEncouragedToday = other.hasBeenEncouragedToday;
+        this.hasBeenCongratulatedToday = other.hasBeenCongratulatedToday;
     }
 
 
@@ -102,8 +108,10 @@ public class User extends Observable {
      */
     public void finishDay(Calendar calendar){
         endPlannedWalk();
-        stepHistory.updateHist(currentDayStats);
         currentDayStats = new Day(calendar);
+        stepHistory.updateHist(currentDayStats);
+        hasBeenEncouragedToday = false;
+        hasBeenCongratulatedToday = false;
     }
 
 
@@ -115,6 +123,14 @@ public class User extends Observable {
         int oldDay = currentDayStats.getDay();
         int currDay = calendar.get(Calendar.DAY_OF_WEEK);
         return oldDay != currDay;
+    }
+
+
+    /**
+     * Description: Returns true if user reached goal
+     */
+    public boolean reachedGoal(){
+        return totalDailySteps >= goal;
     }
 
 
@@ -151,4 +167,19 @@ public class User extends Observable {
         return stepHistory;
     }
 
+    public boolean isHasBeenEncouragedToday() {
+        return hasBeenEncouragedToday;
+    }
+
+    public void setHasBeenEncouragedToday(boolean hasBeenEncouragedToday) {
+        this.hasBeenEncouragedToday = hasBeenEncouragedToday;
+    }
+
+    public boolean isHasBeenCongratulatedToday() {
+        return hasBeenCongratulatedToday;
+    }
+
+    public void setHasBeenCongratulatedToday(boolean hasBeenCongratulatedToday) {
+        this.hasBeenCongratulatedToday = hasBeenCongratulatedToday;
+    }
 }

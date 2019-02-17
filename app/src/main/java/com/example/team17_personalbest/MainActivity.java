@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         // Manage encouragements with ProgressService
         ProgressService progressService = new ProgressService(MainActivity.this);
         user.addObserver(progressService);
-        //TODO: reset progress in progressService to 0 at midnight
 
         // Create fitness service
         FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
