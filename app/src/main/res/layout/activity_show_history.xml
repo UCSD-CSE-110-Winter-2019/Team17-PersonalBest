@@ -20,10 +20,11 @@
         app:menu="@menu/navigation" />
 
     <com.github.mikephil.charting.charts.BarChart
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/bar_graph"
-        app:layout_constraintBottom_toTopOf="@+id/navigation"></com.github.mikephil.charting.charts.BarChart>
+        android:layout_width="match_parent"
+        android:layout_height="456dp"
+        app:layout_constraintBottom_toTopOf="@+id/navigation"
+        tools:layout_editor_absoluteX="16dp"></com.github.mikephil.charting.charts.BarChart>
 
 
 </android.support.constraint.ConstraintLayout>

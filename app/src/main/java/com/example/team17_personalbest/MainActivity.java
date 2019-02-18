@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         return false;
                     }
+
                 });
 
         // Manage steps and goal displays with HomeDisplayManager
