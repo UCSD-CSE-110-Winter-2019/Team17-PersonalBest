@@ -15,7 +15,7 @@ public class StepHistory {
         hist.add(d);
     }
 
-    public Day[] getHist(){
+    public ArrayList<Day> getHist(){
         Day[] result = new Day[7];
         int DAY_NUM = 7;
 
@@ -35,7 +35,12 @@ public class StepHistory {
             result[d] = day;
         }
 
-        return result;
+        ArrayList<Day> dayList = new ArrayList<>();
+        for(int i =0; i < result.length; i++){
+            dayList.add(result[i]);
+        }
+
+        return dayList;
     }
 
     private int findDay(Day day){
