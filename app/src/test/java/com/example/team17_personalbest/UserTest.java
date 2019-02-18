@@ -54,22 +54,31 @@ public class UserTest {
         Calendar tuesday = Calendar.getInstance();
         tuesday.set(2000, 3, 4);
 
+        Calendar wednesday = Calendar.getInstance();
+        wednesday.set(2000, 3, 5);
+
         // Walking 100 normal steps and 150 planned steps and calling finishDay updates stepHistory
         // and resets hasBeenEncouragedToday
         User user = new User(100, tuesday);
+
         assertEquals(user.isHasBeenEncouragedToday(), false);
         assertEquals(user.isHasBeenCongratulatedToday(), false);
+
         user.setHasBeenEncouragedToday(true);
         user.setHasBeenCongratulatedToday(true);
+
         assertEquals(user.isHasBeenEncouragedToday(), true);
         assertEquals(user.isHasBeenCongratulatedToday(), true);
+
         user.walk(100, tuesday);
         user.startPlannedWalk(tuesday);
         user.walk(150, tuesday);
-        user.finishDay(tuesday);
+        user.finishDay(wednesday);
+
         StepHistory stepHistory = user.getStepHistory();
         assertEquals(stepHistory.getHist().get(2).getNormalSteps(), 100);
         assertEquals(stepHistory.getHist().get(2).getPlannedSteps(), 150);
+
         assertEquals(user.isHasBeenEncouragedToday(), false);
         assertEquals(user.isHasBeenCongratulatedToday(), false);
     }
@@ -94,6 +103,7 @@ public class UserTest {
         user.walk(250, wednesday);
         user.walk(300, thursday);
         StepHistory stepHistory = user.getStepHistory();
+
         assertEquals(stepHistory.getHist().get(2).getNormalSteps(), 100);
         assertEquals(stepHistory.getHist().get(3).getNormalSteps(), 200);
         assertEquals(stepHistory.getHist().get(3).getPlannedSteps(), 250);

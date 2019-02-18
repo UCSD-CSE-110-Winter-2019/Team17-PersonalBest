@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
             displayHeightPrompt();
         }
         user.addObserver(homeDisplayManager);
+        user.getStepHistory().printHist();
 
         // Manage encouragements with ProgressService
         ProgressService progressService = new ProgressService(MainActivity.this);
