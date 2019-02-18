@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 /**
@@ -26,12 +28,12 @@ public class StepHistoryTest {
             stepHistory.updateHist(day);
         }
 
-        Day[] hist = stepHistory.getHist();
+        ArrayList<Day> hist = stepHistory.getHist();
 
         int j = 6;
         for(int i = numDays; i > numDays-7; i--){
-            assertEquals(hist[j].getNormalSteps(), i-1);
-            assertEquals(hist[j].getPlannedSteps(), i);
+            assertEquals(hist.get(j).getNormalSteps(), i-1);
+            assertEquals(hist.get(j).getPlannedSteps(), i);
             j--;
         }
 
