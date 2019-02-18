@@ -32,7 +32,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         loadUser();
         showHistory(user.getStepHistory().getHist());
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
                 // Switching between home screen and history
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -49,6 +49,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
                         return false;
                     }
                 });
+        navigation.setSelectedItemId(R.id.navigation_dashboard);
 
     }
 

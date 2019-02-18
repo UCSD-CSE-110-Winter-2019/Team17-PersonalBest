@@ -68,8 +68,8 @@ public class UserTest {
         user.walk(150, tuesday);
         user.finishDay(tuesday);
         StepHistory stepHistory = user.getStepHistory();
-        assertEquals(stepHistory.getHist()[2].getNormalSteps(), 100);
-        assertEquals(stepHistory.getHist()[2].getPlannedSteps(), 150);
+        assertEquals(stepHistory.getHist().get(2).getNormalSteps(), 100);
+        assertEquals(stepHistory.getHist().get(2).getPlannedSteps(), 150);
         assertEquals(user.isHasBeenEncouragedToday(), false);
         assertEquals(user.isHasBeenCongratulatedToday(), false);
     }
@@ -94,10 +94,10 @@ public class UserTest {
         user.walk(250, wednesday);
         user.walk(300, thursday);
         StepHistory stepHistory = user.getStepHistory();
-        assertEquals(stepHistory.getHist()[2].getNormalSteps(), 100);
-        assertEquals(stepHistory.getHist()[3].getNormalSteps(), 200);
-        assertEquals(stepHistory.getHist()[3].getPlannedSteps(), 250);
-        assertEquals(stepHistory.getHist()[4].getNormalSteps(), 300);
+        assertEquals(stepHistory.getHist().get(2).getNormalSteps(), 100);
+        assertEquals(stepHistory.getHist().get(3).getNormalSteps(), 200);
+        assertEquals(stepHistory.getHist().get(3).getPlannedSteps(), 250);
+        assertEquals(stepHistory.getHist().get(4).getNormalSteps(), 300);
         assertEquals(user.getCurrentWalk(), null);
 
     }
