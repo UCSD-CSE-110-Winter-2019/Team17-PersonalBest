@@ -1,6 +1,7 @@
 package com.example.team17_personalbest;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -9,12 +10,14 @@ import android.view.MenuItem;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.StackedValueFormatter;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -56,13 +59,21 @@ public class ShowHistoryActivity extends AppCompatActivity {
     }
 
     public void showHistory(ArrayList<Day> hist){
+        // Get data from hist
         ArrayList<BarEntry> barEntries = new ArrayList<>();
         for(int i = 0; i < hist.size(); i++){
-            barEntries.add(new BarEntry(i, hist.get(i).getNormalSteps()));
+            BarEntry entry = new BarEntry(i, new float[]{hist.get(i).getNormalSteps(), hist.get(i).getPlannedSteps()});
+            barEntries.add(entry);
         }
-        BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
 
-        final String[] axes = new String[]{"Sun", "Mon","Tue","Wed","Thur","Fri","Sat"};
+        // Format data
+        BarDataSet barDataSet = new BarDataSet(barEntries, "Step History");
+        barDataSet.setColors(Color.GREEN, Color.RED);
+        barDataSet.setStackLabels(new String[] {"Normal Steps", "Planned Steps"});
+        barDataSet.setValueFormatter(new StackedValueFormatter(false, "", 0));
+
+        // Format axes
+        final String[] axes = new String[]{"Sun", "Mon","Tue","Wed","Thu","Fri","Sat"};
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
@@ -75,9 +86,16 @@ public class ShowHistoryActivity extends AppCompatActivity {
         xAxis.setValueFormatter(formatter);
 
 
+        // Format bar chart
+        barChart.setDrawGridBackground(false);
+        Description desc = new Description();
+        desc.setText("");
         BarData barData = new BarData(barDataSet);
         barChart.setData(barData);
         barChart.setVisibleYRange(0, (float)user.getGoal() + 1000, YAxis.AxisDependency.LEFT);
+        barChart.setExtraOffsets(20,20,20,20);
+        barChart.setDescription(desc);
+        barChart.getXAxis().setDrawGridLines(false);
     }
 
     /**
