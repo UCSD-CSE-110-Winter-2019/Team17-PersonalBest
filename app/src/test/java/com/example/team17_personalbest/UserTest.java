@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 public class UserTest {
 
-    /*@Test
+    @Test
     public void test_walk(){
         // Walking 100 steps
         User user = new User(100, Calendar.getInstance());
@@ -25,7 +25,7 @@ public class UserTest {
         assertEquals(user.getTotalDailySteps(), 100);
     }
 
-    @Test
+    /*@Test
     public void test_plannedWalk(){
         // Walking 100 planned steps
         User user = new User(100, Calendar.getInstance());
@@ -38,7 +38,7 @@ public class UserTest {
         user.endPlannedWalk();
         assertEquals(user.getCurrentWalk(), null);
 
-    }
+    }*/
 
     @Test
     public void test_updateDailySteps(){
@@ -49,7 +49,7 @@ public class UserTest {
         assertEquals(user.getTotalDailySteps(), 1000);
     }
 
-    @Test
+    /*@Test
     public void test_finishDay(){
         Calendar tuesday = Calendar.getInstance();
         tuesday.set(2000, 3, 4);
@@ -72,10 +72,10 @@ public class UserTest {
         assertEquals(stepHistory.getHist().get(2).getPlannedSteps(), 150);
         assertEquals(user.isHasBeenEncouragedToday(), false);
         assertEquals(user.isHasBeenCongratulatedToday(), false);
-    }
+    }*/
 
 
-    @Test
+    /*@Test
     public void test_walkNewDay(){
         Calendar tuesday = Calendar.getInstance();
         tuesday.set(2000, 3, 4);
