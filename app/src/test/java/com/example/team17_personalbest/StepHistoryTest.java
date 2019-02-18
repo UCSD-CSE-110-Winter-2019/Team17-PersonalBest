@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 public class StepHistoryTest {
 
-    /*@Test
+    @Test
     public void test_History(){
         StepHistory stepHistory = new StepHistory();
         int numDays = 7;
@@ -37,7 +37,7 @@ public class StepHistoryTest {
             j--;
         }
 
-    }*/
+    }
 
     @Test
     public void test_getYesterdayStep(){
