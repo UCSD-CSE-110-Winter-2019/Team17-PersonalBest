@@ -22,22 +22,18 @@ public class PlannedWalk {
         this.steps = 0;
         this.strideLength = calculateStride(height);
         this.startTime = startTime;
-        this.time = Calendar.getInstance().getTimeInMillis();
+        this.time = startTime;
         this.speed = 0;
         this.distance = 0;
     }
 
-    public void walk(int steps) {
+    public void walk(int steps, Calendar calendar) {
         this.steps += steps;
         this.distance += calculateDistance(steps);
-        this.time = Calendar.getInstance().getTimeInMillis();
-        this.speed = calculateSpeed();
+        this.time = calendar.getTimeInMillis();
+        this.speed = calculateSpeed(calendar);
     }
 
-    public void refreshValues() {
-        this.time = Calendar.getInstance().getTimeInMillis();
-        this.speed = calculateSpeed();
-    }
 
     // returns distance in miles
     private float calculateDistance(int steps) {
@@ -45,9 +41,12 @@ public class PlannedWalk {
     }
 
     // returns speed in miles per hour
-    private float calculateSpeed() {
-        this.time = Calendar.getInstance().getTimeInMillis();
-        return distance / (((float)(time - startTime) / (1000*60*60)));
+    private float calculateSpeed(Calendar calendar) {
+        this.time = calendar.getTimeInMillis();
+        if(time == startTime)
+            return 0;
+        else
+            return distance / (((float)(time - startTime) / (1000*60*60)));
     }
 
     // convert height to stride length in miles

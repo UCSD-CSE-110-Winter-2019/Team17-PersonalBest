@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.example.team17_personalbest.fitness.FitnessService;
 import com.example.team17_personalbest.fitness.FitnessServiceFactory;
 import com.example.team17_personalbest.fitness.GoogleFitAdapter;
+import com.example.team17_personalbest.fitness.TestFitnessService;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create user and add observers
         loadUser();
+        user = new User(70, Calendar.getInstance());
         if (user == null) {
             user = new User(70, Calendar.getInstance());
             displayHeightPrompt();
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
             @Override
             public FitnessService create(MainActivity activity) {
-                return new GoogleFitAdapter(activity, user);
+                return new TestFitnessService(activity, user);
             }
         });
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
@@ -107,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PlannedWalk currWalk = user.getCurrentWalk();
                 if(currWalk == null) {
-                    user.startPlannedWalk(Calendar.getInstance());
+                    user.startPlannedWalk(fitnessService.getTime());
                 }else{
                     user.endPlannedWalk();
                 }
@@ -137,6 +139,24 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0, 1000);
+
+        // add steps testing button controllers
+        Button addSteps = findViewById(R.id.add_steps_button);
+        addSteps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fitnessService.addSteps(500);
+            }
+        });
+
+        // add time testing button controllers
+        Button addTime = findViewById(R.id.add_time_button);
+        addTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayAddTimePrompt();
+            }
+        });
     }
 
     @Override
@@ -257,6 +277,45 @@ public class MainActivity extends AppCompatActivity {
         } else {
             user = new User(gson.fromJson(userjson, User.class));
         }
+    }
+
+    /**
+     * Creates a popup that lets the user add time
+     */
+    public void displayAddTimePrompt() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add time");
+
+        // Set up user input
+        final EditText dialogInput = new EditText(this);
+        dialogInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+        dialogInput.setHint("Enter number of milliseconds");
+        dialogInput.setTextSize(10);
+        builder.setView(dialogInput);
+
+        // Confirm button controller
+        builder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int millis;
+                if (dialogInput.getText().toString().equals("")){
+                    millis = 0;
+                } else {
+                    millis = Integer.parseInt(dialogInput.getText().toString());
+                }
+                fitnessService.addTime(millis);
+            }
+        });
+
+        // Cancel button controller
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
 }

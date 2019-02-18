@@ -59,7 +59,7 @@ public class User extends Observable {
 
         this.totalDailySteps += steps;
         if (currentWalk != null){
-            currentWalk.walk(steps);
+            currentWalk.walk(steps, calendar);
             currentDayStats.addPlannedSteps(steps);
         }
         else{
@@ -76,6 +76,9 @@ public class User extends Observable {
      *         calendar - the current time
      */
     public void updateDailySteps(long totalDailySteps, Calendar calendar){
+        if(isNewDay(calendar))
+            finishDay(calendar);
+
         int steps = (int) totalDailySteps - this.totalDailySteps;
         walk(steps, calendar);
     }
@@ -112,6 +115,7 @@ public class User extends Observable {
         stepHistory.updateHist(currentDayStats);
         hasBeenEncouragedToday = false;
         hasBeenCongratulatedToday = false;
+        totalDailySteps = 0;
     }
 
 

@@ -115,6 +115,21 @@ public class GoogleFitAdapter implements FitnessService {
     }
 
     @Override
+    public void addSteps(int steps) {
+
+    }
+
+    @Override
+    public void addTime(int millis) {
+
+    }
+
+    @Override
+    public Calendar getTime() {
+        return Calendar.getInstance();
+    }
+
+    @Override
     public int getRequestCode() {
         return GOOGLE_FIT_PERMISSIONS_REQUEST_CODE;
     }
