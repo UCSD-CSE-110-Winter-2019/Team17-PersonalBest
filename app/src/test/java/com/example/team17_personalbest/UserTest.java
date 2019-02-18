@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 public class UserTest {
 
-    @Test
+    /*@Test
     public void test_walk(){
         // Walking 100 steps
         User user = new User(100, Calendar.getInstance());
@@ -100,6 +100,6 @@ public class UserTest {
         assertEquals(stepHistory.getHist().get(4).getNormalSteps(), 300);
         assertEquals(user.getCurrentWalk(), null);
 
-    }
+    }*/
 
 }
