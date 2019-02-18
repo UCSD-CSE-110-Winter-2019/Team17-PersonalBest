@@ -52,6 +52,8 @@ public class StepHistory {
         }
     }
 
+
+
     public void printHist(){
         for(int i = 0; i < hist.size(); i++){
             System.out.println(hist.get(i).getDayString() + ", " + hist.get(i).getPlannedSteps() + ", " + hist.get(i).getNormalSteps());
@@ -65,4 +67,7 @@ public class StepHistory {
         return yesterday.getNormalSteps() + yesterday.getPlannedSteps();
     }
 
+    public Day getCurrentDay(){
+        return hist.get(hist.size() - 1);
+    }
 }

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -61,7 +62,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         }
         BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
 
-        final String[] axes = new String[]{"Sunday", "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"};
+        final String[] axes = new String[]{"Sun", "Mon","Tue","Wed","Thur","Fri","Sat"};
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
@@ -73,8 +74,10 @@ public class ShowHistoryActivity extends AppCompatActivity {
         XAxis xAxis = barChart.getXAxis();
         xAxis.setValueFormatter(formatter);
 
+
         BarData barData = new BarData(barDataSet);
         barChart.setData(barData);
+        barChart.setVisibleYRange(0, (float)user.getGoal() + 1000, YAxis.AxisDependency.LEFT);
     }
 
     /**

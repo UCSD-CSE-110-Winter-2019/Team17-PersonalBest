@@ -93,7 +93,7 @@ public class GoogleFitAdapter implements FitnessService {
                 new OnSuccessListener<DataSet>() {
                     @Override
                     public void onSuccess(DataSet dataSet) {
-                        Log.d(TAG, dataSet.toString());
+//                        Log.d(TAG, dataSet.toString());
                         long total =
                             dataSet.isEmpty()
                                 ? 0
@@ -101,7 +101,8 @@ public class GoogleFitAdapter implements FitnessService {
                         // update the step count in User class, which will notify
                         // all Observers classes
                         user.updateDailySteps(total, Calendar.getInstance());
-                        Log.d(TAG, "Total steps: " + total);
+//                        Log.d(TAG, "Total steps: " + total);
+                        user.getStepHistory().printHist();
                     }
                 })
             .addOnFailureListener(

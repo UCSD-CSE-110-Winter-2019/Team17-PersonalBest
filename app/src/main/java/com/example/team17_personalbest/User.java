@@ -40,7 +40,7 @@ public class User extends Observable {
         this.totalDailySteps = other.totalDailySteps;
         this.currentWalk = other.currentWalk;
         this.stepHistory = other.stepHistory;
-        this.currentDayStats = other.currentDayStats;
+        this.currentDayStats = stepHistory.getCurrentDay();
         this.hasBeenEncouragedToday = other.hasBeenEncouragedToday;
         this.hasBeenCongratulatedToday = other.hasBeenCongratulatedToday;
     }
