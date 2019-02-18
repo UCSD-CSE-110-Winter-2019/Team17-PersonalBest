@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Create user and add observers
         loadUser();
-        user = new User(70, Calendar.getInstance());
         if (user == null) {
             user = new User(70, Calendar.getInstance());
             displayHeightPrompt();
