@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         user.getStepHistory().printHist();
 
         // Manage encouragements with ProgressService
-        ProgressService progressService = new ProgressService(MainActivity.this);
+        ProgressService progressService = new ProgressService(MainActivity.this, user);
         user.addObserver(progressService);
 
         // Create fitness service

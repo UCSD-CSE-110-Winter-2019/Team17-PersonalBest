@@ -70,7 +70,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         BarDataSet barDataSet = new BarDataSet(barEntries, "Step History");
         barDataSet.setColors(Color.GREEN, Color.RED);
         barDataSet.setStackLabels(new String[] {"Normal Steps", "Planned Steps"});
-        barDataSet.setValueFormatter(new StackedValueFormatter(false, "", 0));
+        barDataSet.setValueFormatter(new StackedValueFormatter(true, "", 0));
 
         // Format axes
         final String[] axes = new String[]{"Sun", "Mon","Tue","Wed","Thu","Fri","Sat"};
@@ -96,6 +96,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         barChart.setExtraOffsets(20,20,20,20);
         barChart.setDescription(desc);
         barChart.getXAxis().setDrawGridLines(false);
+        barChart.setFitBars(true);
     }
 
     /**
