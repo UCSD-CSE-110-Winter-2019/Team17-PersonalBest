@@ -31,6 +31,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         barChart = (BarChart) findViewById(R.id.bar_graph);
         loadUser();
         showHistory(user.getStepHistory().getHist());
+        user.getStepHistory().printHist();
 
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(

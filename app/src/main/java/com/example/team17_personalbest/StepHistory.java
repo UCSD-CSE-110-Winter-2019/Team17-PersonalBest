@@ -18,11 +18,16 @@ public class StepHistory {
     public ArrayList<Day> getHist(){
         ArrayList<Day> dayList = new ArrayList<>();
         int i = hist.size() - 1;
-        while(i < hist.size()){
-            dayList.add(hist.get(i));
-            if(hist.get(i).getDay() == 0){ // if Sunday is found, break the loop
+        for(int x = 0; x < 7; x++){
+            dayList.add(new Day(x + 1));
+        }
+        while(i < hist.size() && i >= 0){
+            Day currDay = hist.get(i);
+            dayList.set(currDay.getDay() - 1, currDay);
+            if(currDay.getDay() == Calendar.SUNDAY){ // if Sunday is found, break the loop
                 break;
             }
+            i--;
         }
 
         return dayList;
