@@ -259,8 +259,19 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedPreferences.edit();
         Gson gson = new Gson();
-        String userjson = gson.toJson(user);
-        edit.putString("user", userjson);
+
+        String stepHist = gson.toJson(user.getStepHistory());
+        String plannedWalk = gson.toJson(user.getCurrentWalk());
+        String day = gson.toJson(user.getCurrentDayStats());
+        edit.putInt("height", user.getHeight());
+        edit.putInt("goal", user.getGoal());
+        edit.putInt("daily_steps", user.getTotalDailySteps());
+        edit.putBoolean("encouraged", user.isHasBeenEncouragedToday());
+        edit.putBoolean("congratulated", user.isHasBeenCongratulatedToday());
+        edit.putString("stepHist", stepHist);
+        edit.putString("plannedWalk", plannedWalk);
+        edit.putString("day", day);
+
         edit.apply();
     }
 
@@ -270,11 +281,24 @@ public class MainActivity extends AppCompatActivity {
     public void loadUser() {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         Gson gson = new Gson();
-        String userjson = sharedPreferences.getString("user", "");
-        if (userjson.equals("")){
+        int height = sharedPreferences.getInt("height", 0);
+        if (height == 0){
             user = null;
         } else {
-            user = new User(gson.fromJson(userjson, User.class));
+
+            user= new User(height, Calendar.getInstance());
+            StepHistory stepHistory = gson.fromJson(sharedPreferences.getString("stepHist", ""), StepHistory.class);
+            PlannedWalk plannedWalk = gson.fromJson(sharedPreferences.getString("plannedWalk", ""), PlannedWalk.class);
+            Day day = gson.fromJson(sharedPreferences.getString("day", ""), Day.class);
+            user.setGoal(sharedPreferences.getInt("goal", 0));
+            user.setTotalDailySteps(sharedPreferences.getInt("daily_steps", 0));
+            user.setHasBeenEncouragedToday(sharedPreferences.getBoolean("encouraged", false));
+            user.setHasBeenCongratulatedToday(sharedPreferences.getBoolean("congratulated",false));
+            user.setStepHistory(stepHistory);
+            user.setCurrentWalk(plannedWalk);
+            user.setCurrentDayStats(day);
+
+
         }
     }
 
