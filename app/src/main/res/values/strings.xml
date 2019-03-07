@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Personal Best</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">History</string>
+    <string name="title_history">History</string>
+    <string name="title_friends">Friends</string>
     <string name="current_steps">Loading</string>
     <string name="daily_goal">/5000</string>
     <string name="button_start">start walk/run</string>
     <string name="button_end">end walk/run</string>
     <string name="new_goal">New Goal</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>
