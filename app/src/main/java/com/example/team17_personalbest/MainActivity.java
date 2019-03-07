@@ -61,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
                                 //mTextMessage.setText(R.string.title_dashboard);
                                 launchHistory();
                                 return true;
+                            case R.id.navigation_friends:
+                                launchFriends();
+                                return true;
                         }
                         return false;
                     }
@@ -171,9 +174,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Display step history
-    public void launchHistory() {
+    /**
+     * Displays step history
+     */
+    private void launchHistory() {
         Intent intent = new Intent(this, ShowHistoryActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Displays friend list
+     */
+    private void launchFriends() {
+        Intent intent = new Intent(this, ShowFriendsActivity.class);
         startActivity(intent);
     }
 
