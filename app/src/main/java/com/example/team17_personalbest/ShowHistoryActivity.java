@@ -1,5 +1,6 @@
 package com.example.team17_personalbest;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -49,13 +50,16 @@ public class ShowHistoryActivity extends AppCompatActivity {
                                 //mTextMessage.setText(R.string.title_home);
                                 finish();
                                 return true;
-                            case R.id.navigation_dashboard:
+                            case R.id.navigation_history:
+                                return true;
+                            case R.id.navigation_friends:
+                                launchFriends();
                                 return true;
                         }
                         return false;
                     }
                 });
-        navigation.setSelectedItemId(R.id.navigation_dashboard);
+        navigation.setSelectedItemId(R.id.navigation_history);
 
     }
 
@@ -126,5 +130,14 @@ public class ShowHistoryActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    /**
+     * Displays friend list
+     */
+    private void launchFriends() {
+        finish();
+        Intent intent = new Intent(this, ShowFriendsActivity.class);
+        startActivity(intent);
     }
 }
