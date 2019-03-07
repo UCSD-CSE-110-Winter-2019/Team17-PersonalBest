@@ -23,15 +23,12 @@ import android.widget.TextView;
 
 import com.example.team17_personalbest.fitness.FitnessService;
 import com.example.team17_personalbest.fitness.FitnessServiceFactory;
-import com.example.team17_personalbest.fitness.GoogleFitAdapter;
 import com.example.team17_personalbest.fitness.TestFitnessService;
 import com.google.gson.Gson;
 
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private String fitnessServiceKey = "GOOGLE_FIT";
@@ -57,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                             case R.id.navigation_home:
                                 //mTextMessage.setText(R.string.title_home);
                                 return true;
-                            case R.id.navigation_dashboard:
+                            case R.id.navigation_history:
                                 //mTextMessage.setText(R.string.title_dashboard);
                                 launchHistory();
                                 return true;
