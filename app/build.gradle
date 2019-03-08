@@ -24,7 +24,7 @@ android {
     }
     lintOptions {
         disable 'GradleCompatible'
-
+        warning 'InvalidPackage'
     }
     testOptions {
         unitTests {
