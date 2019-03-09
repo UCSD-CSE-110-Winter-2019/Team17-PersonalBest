@@ -1,5 +1,6 @@
 package com.example.team17_personalbest;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.github.mikephil.charting.formatter.StackedValueFormatter;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ShowHistoryActivity extends AppCompatActivity {
 
@@ -48,13 +50,16 @@ public class ShowHistoryActivity extends AppCompatActivity {
                                 //mTextMessage.setText(R.string.title_home);
                                 finish();
                                 return true;
-                            case R.id.navigation_dashboard:
+                            case R.id.navigation_history:
+                                return true;
+                            case R.id.navigation_friends:
+                                launchFriends();
                                 return true;
                         }
                         return false;
                     }
                 });
-        navigation.setSelectedItemId(R.id.navigation_dashboard);
+        navigation.setSelectedItemId(R.id.navigation_history);
 
     }
 
@@ -103,13 +108,36 @@ public class ShowHistoryActivity extends AppCompatActivity {
      * Loads the user settings and history from sharedPreferences
      */
     public void loadUser() {
+
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         Gson gson = new Gson();
-        String userjson = sharedPreferences.getString("user", "");
-        if (userjson.equals("")){
+        int height = sharedPreferences.getInt("height", 0);
+        if (height == 0){
             user = null;
         } else {
-            user = new User(gson.fromJson(userjson, User.class));
+
+            user= new User(height, Calendar.getInstance());
+            StepHistory stepHistory = gson.fromJson(sharedPreferences.getString("stepHist", ""), StepHistory.class);
+            PlannedWalk plannedWalk = gson.fromJson(sharedPreferences.getString("plannedWalk", ""), PlannedWalk.class);
+            Day day = gson.fromJson(sharedPreferences.getString("day", ""), Day.class);
+            user.setGoal(sharedPreferences.getInt("goal", 0));
+            user.setTotalDailySteps(sharedPreferences.getInt("daily_steps", 0));
+            user.setHasBeenEncouragedToday(sharedPreferences.getBoolean("encouraged", false));
+            user.setHasBeenCongratulatedToday(sharedPreferences.getBoolean("congratulated",false));
+            user.setStepHistory(stepHistory);
+            user.setCurrentWalk(plannedWalk);
+            user.setCurrentDayStats(day);
+
+
         }
+    }
+
+    /**
+     * Displays friend list
+     */
+    private void launchFriends() {
+        finish();
+        Intent intent = new Intent(this, ShowFriendsActivity.class);
+        startActivity(intent);
     }
 }

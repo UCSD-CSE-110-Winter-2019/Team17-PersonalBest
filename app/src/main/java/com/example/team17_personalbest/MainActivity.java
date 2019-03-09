@@ -21,17 +21,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.team17_personalbest.firebase.FirebaseAdapter;
 import com.example.team17_personalbest.fitness.FitnessService;
 import com.example.team17_personalbest.fitness.FitnessServiceFactory;
-import com.example.team17_personalbest.fitness.GoogleFitAdapter;
 import com.example.team17_personalbest.fitness.TestFitnessService;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
-import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private String fitnessServiceKey = "GOOGLE_FIT";
@@ -40,10 +47,27 @@ public class MainActivity extends AppCompatActivity {
     private User user;
     private FitnessService fitnessService;
 
+    private GoogleSignInAccount account;
+    private GoogleSignInClient mGoogleSignInClient;
+    private int RC_SIGN_IN = 0;
+
+    private FirebaseAdapter db;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // google sign in
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        account = GoogleSignIn.getLastSignedInAccount(this);
+        if(account == null){
+            signIn();
+        }
 
         // navigation bar controller
         mTextMessage = (TextView) findViewById(R.id.message);
@@ -57,9 +81,12 @@ public class MainActivity extends AppCompatActivity {
                             case R.id.navigation_home:
                                 //mTextMessage.setText(R.string.title_home);
                                 return true;
-                            case R.id.navigation_dashboard:
+                            case R.id.navigation_history:
                                 //mTextMessage.setText(R.string.title_dashboard);
                                 launchHistory();
+                                return true;
+                            case R.id.navigation_friends:
+                                launchFriends();
                                 return true;
                         }
                         return false;
@@ -101,19 +128,11 @@ public class MainActivity extends AppCompatActivity {
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
         fitnessService.setup();
 
-        // start walk button controller
-        walkButton.setOnClickListener(new View.OnClickListener() {
+        //Create database
+        FirebaseApp.initializeApp(this);
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        db = new FirebaseAdapter(firebaseFirestore);
 
-            @Override
-            public void onClick(View v) {
-                PlannedWalk currWalk = user.getCurrentWalk();
-                if(currWalk == null) {
-                    user.startPlannedWalk(fitnessService.getTime());
-                }else{
-                    user.endPlannedWalk();
-                }
-            }
-        });
 
         // set goal button controller
         Button setGoal = findViewById(R.id.create_goal);
@@ -158,22 +177,58 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // google sign in
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // If authentication was required during google fit setup, this will
         // be called after the user authenticates
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK || resultCode == RC_SIGN_IN) {
             if (requestCode == fitnessService.getRequestCode()) {
                 fitnessService.updateStepCount();
             }
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+
         } else {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
         }
     }
 
-    // Display step history
-    public void launchHistory() {
+    /**
+     * if sign in is successfull, add user to firebase database
+     * @param completedTask
+     */
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            if(db != null){
+                db.addUser(account.getId(), account.getDisplayName(), account.getEmail());
+            }
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+        }
+    }
+
+    /**
+     * Displays step history
+     */
+    private void launchHistory() {
         Intent intent = new Intent(this, ShowHistoryActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Displays friend list
+     */
+    private void launchFriends() {
+        Intent intent = new Intent(this, ShowFriendsActivity.class);
         startActivity(intent);
     }
 
@@ -259,8 +314,19 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         SharedPreferences.Editor edit = sharedPreferences.edit();
         Gson gson = new Gson();
-        String userjson = gson.toJson(user);
-        edit.putString("user", userjson);
+
+        String stepHist = gson.toJson(user.getStepHistory());
+        String plannedWalk = gson.toJson(user.getCurrentWalk());
+        String day = gson.toJson(user.getCurrentDayStats());
+        edit.putInt("height", user.getHeight());
+        edit.putInt("goal", user.getGoal());
+        edit.putInt("daily_steps", user.getTotalDailySteps());
+        edit.putBoolean("encouraged", user.isHasBeenEncouragedToday());
+        edit.putBoolean("congratulated", user.isHasBeenCongratulatedToday());
+        edit.putString("stepHist", stepHist);
+        edit.putString("plannedWalk", plannedWalk);
+        edit.putString("day", day);
+
         edit.apply();
     }
 
@@ -270,11 +336,24 @@ public class MainActivity extends AppCompatActivity {
     public void loadUser() {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         Gson gson = new Gson();
-        String userjson = sharedPreferences.getString("user", "");
-        if (userjson.equals("")){
+        int height = sharedPreferences.getInt("height", 0);
+        if (height == 0){
             user = null;
         } else {
-            user = new User(gson.fromJson(userjson, User.class));
+
+            user= new User(height, Calendar.getInstance());
+            StepHistory stepHistory = gson.fromJson(sharedPreferences.getString("stepHist", ""), StepHistory.class);
+            PlannedWalk plannedWalk = gson.fromJson(sharedPreferences.getString("plannedWalk", ""), PlannedWalk.class);
+            Day day = gson.fromJson(sharedPreferences.getString("day", ""), Day.class);
+            user.setGoal(sharedPreferences.getInt("goal", 0));
+            user.setTotalDailySteps(sharedPreferences.getInt("daily_steps", 0));
+            user.setHasBeenEncouragedToday(sharedPreferences.getBoolean("encouraged", false));
+            user.setHasBeenCongratulatedToday(sharedPreferences.getBoolean("congratulated",false));
+            user.setStepHistory(stepHistory);
+            user.setCurrentWalk(plannedWalk);
+            user.setCurrentDayStats(day);
+
+
         }
     }
 

@@ -177,6 +177,29 @@ public class User extends Observable {
         return currentWalk;
     }
 
+    public Day getCurrentDayStats() {
+        return currentDayStats;
+    }
+
+    public void setTotalDailySteps(int totalDailySteps) {
+        this.totalDailySteps = totalDailySteps;
+    }
+
+    public void setStepHistory(StepHistory stepHistory) {
+
+        this.stepHistory = stepHistory;
+    }
+
+    public void setCurrentWalk(PlannedWalk currentWalk) {
+
+        this.currentWalk = currentWalk;
+    }
+
+    public void setCurrentDayStats(Day currentDayStats) {
+
+        this.currentDayStats = currentDayStats;
+    }
+
     public StepHistory getStepHistory() {
         return stepHistory;
     }

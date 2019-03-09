@@ -102,7 +102,7 @@ public class GoogleFitAdapter implements FitnessService {
                         // update the step count in User class, which will notify
                         // all Observers classes
                         user.updateDailySteps(total, Calendar.getInstance());
-//                        Log.d(TAG, "Total steps: " + total);
+                        Log.d(TAG, "Total steps: " + total);
                         user.getStepHistory().printHist();
                     }
                 })
