@@ -1,5 +1,6 @@
 package com.example.team17_personalbest;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Observable;
 
@@ -12,6 +13,12 @@ public class User extends Observable {
     private Day currentDayStats;
     private boolean hasBeenEncouragedToday;
     private boolean hasBeenCongratulatedToday;
+    private String userName;
+
+    private ArrayList<String> friends;
+    private ArrayList<String> pendingFriends;
+    private ArrayList<String> pendingRequests;
+
 
     /**
      * Constructor
@@ -29,6 +36,9 @@ public class User extends Observable {
         this.stepHistory.updateHist(currentDayStats);
         this.hasBeenEncouragedToday = false;
         this.hasBeenCongratulatedToday = false;
+
+
+        this.friends = new ArrayList<String>();
     }
 
 
@@ -179,6 +189,10 @@ public class User extends Observable {
         this.hasBeenEncouragedToday = hasBeenEncouragedToday;
     }
 
+    public String getUserName(){ return userName; }
+
+    public void setUserName(String name){ this.userName = name; }
+
     public boolean isHasBeenCongratulatedToday() {
         return hasBeenCongratulatedToday;
     }
@@ -186,4 +200,13 @@ public class User extends Observable {
     public void setHasBeenCongratulatedToday(boolean hasBeenCongratulatedToday) {
         this.hasBeenCongratulatedToday = hasBeenCongratulatedToday;
     }
+
+    public ArrayList<String> getFriends(){ return this.friends; }
+    public ArrayList<String> getPendingFriends(){ return this.pendingFriends; }
+    public ArrayList<String> getPendingRequests(){ return this.pendingFriends; }
+
+    public void setFriends(ArrayList<String> friends){ this.friends = friends; }
+    public void setPendingFriends(ArrayList<String> pendingFriends){ this.pendingFriends = pendingFriends; }
+    public void setPendingRequests(ArrayList<String> pendingFriends){ this.pendingFriends = pendingFriends; }
+
 }

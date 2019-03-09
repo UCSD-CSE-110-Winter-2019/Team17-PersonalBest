@@ -59,6 +59,7 @@ public class GoogleFitAdapter implements FitnessService {
             return;
         }
 
+
         // Log message for subscribe result
         Fitness.getRecordingClient(activity, lastSignedInAccount)
             .subscribe(DataType.TYPE_STEP_COUNT_CUMULATIVE)
