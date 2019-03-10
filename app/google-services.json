@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "376343357956",
+    "firebase_url": "https://personal-best-232101.firebaseio.com",
+    "project_id": "personal-best-232101",
+    "storage_bucket": "personal-best-232101.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376343357956:android:672b856e1cdac4c2",
+        "android_client_info": {
+          "package_name": "com.example.team17_personalbest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376343357956-rjuepo62phckhv4ql1mt23i73a6v4a54.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrJFSeETGyTypVwYx_2WtXnH-0k4isTyc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
