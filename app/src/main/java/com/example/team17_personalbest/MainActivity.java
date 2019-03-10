@@ -21,10 +21,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.team17_personalbest.firebase.FirebaseAdapter;
-import com.example.team17_personalbest.fitness.FitnessService;
-import com.example.team17_personalbest.fitness.FitnessServiceFactory;
-import com.example.team17_personalbest.fitness.TestFitnessService;
+import com.example.team17_personalbest.Friends.ShowFriendsActivity;
+import com.example.team17_personalbest.Step.Day;
+import com.example.team17_personalbest.Step.PlannedWalk;
+import com.example.team17_personalbest.Step.ProgressService;
+import com.example.team17_personalbest.Step.ShowHistoryActivity;
+import com.example.team17_personalbest.Step.StepHistory;
+import com.example.team17_personalbest.Firestore.FirebaseAdapter;
+import com.example.team17_personalbest.GoogleFit.FitnessService;
+import com.example.team17_personalbest.GoogleFit.FitnessServiceFactory;
+import com.example.team17_personalbest.GoogleFit.TestFitnessService;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -352,7 +358,6 @@ public class MainActivity extends AppCompatActivity {
             user.setStepHistory(stepHistory);
             user.setCurrentWalk(plannedWalk);
             user.setCurrentDayStats(day);
-
 
         }
     }

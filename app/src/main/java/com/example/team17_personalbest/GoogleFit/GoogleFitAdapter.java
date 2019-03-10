@@ -1,4 +1,4 @@
-package com.example.team17_personalbest.fitness;
+package com.example.team17_personalbest.GoogleFit;
 
 import android.support.annotation.NonNull;
 import android.util.Log;

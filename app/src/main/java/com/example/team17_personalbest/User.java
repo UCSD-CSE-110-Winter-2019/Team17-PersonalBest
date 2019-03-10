@@ -1,11 +1,21 @@
 package com.example.team17_personalbest;
 
+import com.example.team17_personalbest.Step.Day;
+import com.example.team17_personalbest.Step.PlannedWalk;
+import com.example.team17_personalbest.Step.StepHistory;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Observable;
 
 public class User extends Observable {
+
+    // basic information
+    private String userName;
+    private String userEmail;
     private int height;
+
+    // Step-related information
     private int goal;
     private int totalDailySteps;
     private PlannedWalk currentWalk;
@@ -13,12 +23,11 @@ public class User extends Observable {
     private Day currentDayStats;
     private boolean hasBeenEncouragedToday;
     private boolean hasBeenCongratulatedToday;
-    private String userName;
 
+    // friend information
     private ArrayList<String> friends;
     private ArrayList<String> pendingFriends;
     private ArrayList<String> pendingRequests;
-
 
     /**
      * Constructor
@@ -36,11 +45,7 @@ public class User extends Observable {
         this.stepHistory.updateHist(currentDayStats);
         this.hasBeenEncouragedToday = false;
         this.hasBeenCongratulatedToday = false;
-
-
-        this.friends = new ArrayList<String>();
     }
-
 
     /** Copy constructor */
     public User(User other){
@@ -154,7 +159,6 @@ public class User extends Observable {
     public int getHeight() {
         return height;
     }
-
     public void setHeight(int height) {
         this.height = height;
     }
@@ -162,7 +166,6 @@ public class User extends Observable {
     public int getGoal() {
         return goal;
     }
-
     public void setGoal(int goal) {
         this.goal = goal;
         setChanged();
@@ -172,64 +175,44 @@ public class User extends Observable {
     public int getTotalDailySteps() {
         return totalDailySteps;
     }
+    public void setTotalDailySteps(int totalDailySteps) { this.totalDailySteps = totalDailySteps; }
 
-    public PlannedWalk getCurrentWalk() {
-        return currentWalk;
-    }
-
-    public Day getCurrentDayStats() {
-        return currentDayStats;
-    }
-
-    public void setTotalDailySteps(int totalDailySteps) {
-        this.totalDailySteps = totalDailySteps;
-    }
-
-    public void setStepHistory(StepHistory stepHistory) {
-
-        this.stepHistory = stepHistory;
-    }
-
-    public void setCurrentWalk(PlannedWalk currentWalk) {
-
-        this.currentWalk = currentWalk;
-    }
-
-    public void setCurrentDayStats(Day currentDayStats) {
-
-        this.currentDayStats = currentDayStats;
-    }
+    public Day getCurrentDayStats() { return currentDayStats; }
+    public void setCurrentDayStats(Day currentDayStats) { this.currentDayStats = currentDayStats; }
 
     public StepHistory getStepHistory() {
         return stepHistory;
     }
+    public void setStepHistory(StepHistory stepHistory) { this.stepHistory = stepHistory; }
 
-    public boolean isHasBeenEncouragedToday() {
-        return hasBeenEncouragedToday;
+    public PlannedWalk getCurrentWalk() {
+        return currentWalk;
     }
-
-    public void setHasBeenEncouragedToday(boolean hasBeenEncouragedToday) {
-        this.hasBeenEncouragedToday = hasBeenEncouragedToday;
-    }
+    public void setCurrentWalk(PlannedWalk currentWalk) { this.currentWalk = currentWalk; }
 
     public String getUserName(){ return userName; }
-
     public void setUserName(String name){ this.userName = name; }
+
+    public ArrayList<String> getFriends(){ return this.friends; }
+    public ArrayList<String> getPendingFriends(){ return this.pendingFriends; }
+    public ArrayList<String> getPendingRequests(){ return this.pendingRequests; }
+    public void setFriends(ArrayList<String> friends){ this.friends = friends; }
+    public void setPendingFriends(ArrayList<String> pendingFriends){ this.pendingFriends = pendingFriends; }
+    public void setPendingRequests(ArrayList<String> pendingRequests){ this.pendingRequests = pendingRequests; }
+
 
     public boolean isHasBeenCongratulatedToday() {
         return hasBeenCongratulatedToday;
     }
-
     public void setHasBeenCongratulatedToday(boolean hasBeenCongratulatedToday) {
         this.hasBeenCongratulatedToday = hasBeenCongratulatedToday;
     }
+    public boolean isHasBeenEncouragedToday() {
+        return hasBeenEncouragedToday;
+    }
+    public void setHasBeenEncouragedToday(boolean hasBeenEncouragedToday) {
+        this.hasBeenEncouragedToday = hasBeenEncouragedToday;
+    }
 
-    public ArrayList<String> getFriends(){ return this.friends; }
-    public ArrayList<String> getPendingFriends(){ return this.pendingFriends; }
-    public ArrayList<String> getPendingRequests(){ return this.pendingFriends; }
-
-    public void setFriends(ArrayList<String> friends){ this.friends = friends; }
-    public void setPendingFriends(ArrayList<String> pendingFriends){ this.pendingFriends = pendingFriends; }
-    public void setPendingRequests(ArrayList<String> pendingFriends){ this.pendingFriends = pendingFriends; }
 
 }

@@ -5,7 +5,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.team17_personalbest"
-        minSdkVersion 16
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -60,6 +60,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
+    implementation 'com.google.firebase:firebase-messaging:17.4.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

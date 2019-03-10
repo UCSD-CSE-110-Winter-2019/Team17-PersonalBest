@@ -1,4 +1,4 @@
-package com.example.team17_personalbest;
+package com.example.team17_personalbest.Step;
 
 import java.util.ArrayList;
 import java.util.Calendar;

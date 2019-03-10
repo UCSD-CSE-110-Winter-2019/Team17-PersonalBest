@@ -1,4 +1,4 @@
-package com.example.team17_personalbest;
+package com.example.team17_personalbest.Friends;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,7 +14,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.example.team17_personalbest.Firestore.CloudStroage;
+import com.example.team17_personalbest.Step.ShowHistoryActivity;
+import com.example.team17_personalbest.User;
+
 public class ShowFriendsActivity extends AppCompatActivity {
+
+    User user;
+    CloudStroage cloud;
+    FriendManager friendManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,29 +61,29 @@ public class ShowFriendsActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * This is for testing, should have User as parameter
-     */
-    private void addFriendToList(String name){
-        LinearLayout friendList = findViewById(R.id.friend_list);
-        LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.friend_list_item, friendList, false);
-
-        Button button = item.findViewById(R.id.friend_hist_button);
-        button.setText(name);
-        friendList.addView(item);
-    }
+//    /**
+//     * This is for testing, should have User as parameter
+//     */
+//    private void addFriendToList(String name){
+//        LinearLayout friendList = findViewById(R.id.friend_list);
+//        LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.friend_list_item, friendList, false);
+//
+//        Button button = item.findViewById(R.id.friend_hist_button);
+//        button.setText(name);
+//        friendList.addView(item);
+//    }
 
     /**
      * Add an item (a friend) to the friend list
      */
-    private void addFriendToList(User user){
+    private void addFriendToList(String friendEmail){
         LinearLayout friendList = findViewById(R.id.friend_list);
         LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.friend_list_item, friendList, false);
 
         Button hist_button = item.findViewById(R.id.friend_hist_button);
         Button chat_button = item.findViewById(R.id.friend_chat_button);
         Button remove_button = item.findViewById(R.id.friend_remove_button);
-        hist_button.setText("user.getname");
+        hist_button.setText(cloud.getUserName(friendEmail));
         // show history
         hist_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,14 +95,14 @@ public class ShowFriendsActivity extends AppCompatActivity {
         chat_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // go to chat
             }
         });
         // remove friend
         remove_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                friendManager.removeFriend(friendEmail);
             }
         });
         friendList.addView(item);
@@ -129,7 +137,8 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String email = dialogInput.getText().toString();
-                addFriendToList(email);
+                // addFriendToList(email);
+                friendManager.addFriend(email);
             }
         });
 
@@ -143,4 +152,5 @@ public class ShowFriendsActivity extends AppCompatActivity {
 
         builder.show();
     }
+
 }
