@@ -2,6 +2,9 @@ package com.example.team17_personalbest;
 
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.team17_personalbest.Step.PlannedWalk;
+
 import java.text.DecimalFormat;
 import java.util.Locale;
 import java.util.Observable;

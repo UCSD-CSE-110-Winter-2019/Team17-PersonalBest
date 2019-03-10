@@ -1,4 +1,4 @@
-package com.example.team17_personalbest.fitness;
+package com.example.team17_personalbest.GoogleFit;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -58,6 +58,7 @@ public class GoogleFitAdapter implements FitnessService {
         if (lastSignedInAccount == null) {
             return;
         }
+
 
         // Log message for subscribe result
         Fitness.getRecordingClient(activity, lastSignedInAccount)

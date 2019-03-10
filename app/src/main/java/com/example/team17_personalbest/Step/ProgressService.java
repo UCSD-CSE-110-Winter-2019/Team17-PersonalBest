@@ -1,4 +1,4 @@
-package com.example.team17_personalbest;
+package com.example.team17_personalbest.Step;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.text.InputType;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.team17_personalbest.User;
 
 import java.util.Locale;
 import java.util.Observable;

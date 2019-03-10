@@ -1,4 +1,4 @@
-package com.example.team17_personalbest;
+package com.example.team17_personalbest.Step;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.team17_personalbest.Friends.ShowFriendsActivity;
+import com.example.team17_personalbest.R;
+import com.example.team17_personalbest.User;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -127,7 +130,6 @@ public class ShowHistoryActivity extends AppCompatActivity {
             user.setStepHistory(stepHistory);
             user.setCurrentWalk(plannedWalk);
             user.setCurrentDayStats(day);
-
 
         }
     }

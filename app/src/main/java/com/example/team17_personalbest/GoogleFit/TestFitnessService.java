@@ -1,4 +1,4 @@
-package com.example.team17_personalbest.fitness;
+package com.example.team17_personalbest.GoogleFit;
 
 import com.example.team17_personalbest.MainActivity;
 import com.example.team17_personalbest.User;

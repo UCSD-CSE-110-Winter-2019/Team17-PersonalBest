@@ -10,9 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name="android.support.multidex.MultiDexApplication" >
+        <activity android:name=".Friends.ShowFriendsActivity" />
         <activity android:name=".ShowFriendHistActivity"></activity>
-        <activity android:name=".ShowFriendsActivity" />
-        <activity android:name=".ShowHistoryActivity" />
+        <activity android:name=".Step.ShowHistoryActivity" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
