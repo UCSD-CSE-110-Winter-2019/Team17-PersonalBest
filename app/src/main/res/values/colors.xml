@@ -3,9 +3,10 @@
     <color name="colorPrimary">#ff9933</color>
     <color name="colorPrimaryDark">#00574b</color>
     <color name="colorAccent">#ff0000</color>
-    <color name="colorWhite">#ffffff</color>
+    <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlack">#000000</color>
     <color name="colorGreen">#458B00</color>
     <color name="colorOffWhite">#EEE9E9</color>
     <color name="colorButton">#ECECEC</color>
+    <color name="transparent">#00ECECEC</color>
 </resources>
