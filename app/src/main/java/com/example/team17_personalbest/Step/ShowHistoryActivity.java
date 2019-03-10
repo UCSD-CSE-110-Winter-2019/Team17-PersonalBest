@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
+import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.User;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
