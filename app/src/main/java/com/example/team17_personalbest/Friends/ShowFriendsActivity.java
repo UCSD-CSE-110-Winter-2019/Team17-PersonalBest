@@ -68,8 +68,18 @@ public class ShowFriendsActivity extends AppCompatActivity {
 //        LinearLayout friendList = findViewById(R.id.friend_list);
 //        LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.friend_list_item, friendList, false);
 //
-//        Button button = item.findViewById(R.id.friend_hist_button);
-//        button.setText(name);
+//        Button hist_button = item.findViewById(R.id.friend_hist_button);
+//        Button chat_button = item.findViewById(R.id.friend_chat_button);
+//        Button remove_button = item.findViewById(R.id.friend_remove_button);
+//        hist_button.setText(name);
+//        // show history
+//        hist_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(ShowFriendsActivity.this,ShowFriendHistActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 //        friendList.addView(item);
 //    }
 
@@ -88,7 +98,8 @@ public class ShowFriendsActivity extends AppCompatActivity {
         hist_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //showHistory
+                Intent intent = new Intent(ShowFriendsActivity.this,ShowFriendHistActivity.class);
+                startActivity(intent);
             }
         });
         // go to chat

@@ -22,7 +22,7 @@
     <Button
         android:id="@+id/add_friend_button"
         android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:text="Add Friend"
         android:textAllCaps="false"
         android:textSize="18sp"
@@ -41,6 +41,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_friend_button">
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pending_list"
+        android:layout_width="350dp"
+        android:layout_height="100dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/navigation">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pending"
+            android:textSize="18dp" />
+
+        <include layout="@layout/pending_list_item"></include>
     </LinearLayout>
 
 
