@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.example.team17_personalbest.Firestore.CloudStroage;
+import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.ShowHistoryActivity;
 import com.example.team17_personalbest.User;
 

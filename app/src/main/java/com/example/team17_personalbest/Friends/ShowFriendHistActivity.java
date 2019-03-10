@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.example.team17_personalbest.R;
+
 public class ShowFriendHistActivity extends AppCompatActivity {
 
     @Override
