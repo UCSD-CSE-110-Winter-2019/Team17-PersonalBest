@@ -6,6 +6,7 @@ import android.util.Pair;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -25,11 +27,16 @@ public class FirebaseAdapter {
     FirebaseFirestore db;
 
     private String TEST_COLLECTION = "test";
+    private String CHAT_COLLECTION = "chats";
 
-    private String USER_COLLECTION = "users";
     private String USER_ID = "u_id";
     private String USER_NAME = "u_name";
     private String USER_EMAIL = "u_email";
+
+    private String USER_COLLECTION = "users";
+    private String MESSAGES_COLLECTION = "messages";
+    String FROM_KEY = "from";
+    String TEXT_KEY = "text";
 
     private HashMap<String, Pair<String,String>> users;     // Users in database
 
@@ -126,5 +133,59 @@ public class FirebaseAdapter {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
+    }
+
+    /**
+     * Gets the collection of chat messages between userID1 and userID2
+     * @param userID1
+     * @param userID2
+     * @return the chats between user1 and user2: the first element is the chat stored under
+     *         user1 and the second element is the chat stored under user2
+     */
+    public CollectionReference[] getChats(String userID1, String userID2){
+        CollectionReference[] chats = new CollectionReference[2];
+        chats[0] = db.collection(USER_COLLECTION)
+                .document(userID1)
+                .collection(CHAT_COLLECTION)
+                .document(userID2)
+                .collection(MESSAGES_COLLECTION);
+        chats[1] = db.collection(USER_COLLECTION)
+                .document(userID2)
+                .collection(CHAT_COLLECTION)
+                .document(userID1)
+                .collection(MESSAGES_COLLECTION);
+        return chats;
+
+    }
+
+    /**
+     * Adds a message into the chats stored under each user
+     * @param userID1 the user sending the message
+     * @param userID2 the user receiving the message
+     * @param text the message
+     */
+    public Task<DocumentReference> sendMessage(String userID1, String userID2, String text){
+        //TODO: Add cloud function for timestamps (not here in java code)
+        HashMap<String, String> message = new HashMap<>();
+        message.put(FROM_KEY, userID1);
+        message.put(TEXT_KEY, text);
+        CollectionReference[] chats = getChats(userID1, userID2);
+        Task<DocumentReference> task = null;
+        for (CollectionReference chat : chats) {
+            task = chat.add(message)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d(TAG, "Message added to chat");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error adding message to chat", e);
+                        }
+                    });
+        }
+        return task;
     }
 }
