@@ -1,38 +1,51 @@
 package com.example.team17_personalbest.Friends;
 
+import android.util.Pair;
+
 import com.example.team17_personalbest.Firestore.CloudStroage;
+import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class FriendManager {
 
     private User user;
-    private CloudStroage cloud;
+    private FirebaseAdapter cloud;
+
 
     /**
      * Constructor
      * @param user current user
      * @param cloud firestore database
      */
-    public FriendManager(User user, CloudStroage cloud){
+    public FriendManager(User user, FirebaseAdapter cloud){
         this.user = user;
         this.cloud = cloud;
+        cloud.getUsersFromDB();
+        cloud.getPendingFriendsFromDB(user.getUserEmail());
+        cloud.getPendingRequestsFromDB(user.getUserEmail());
     }
 
     /**
      * Send a friend request to the User with given email
-     * @param friend friend's email address
+     * @param friendEmail friend's email address
      */
-    public void addFriend(String friend){
+    public void addFriend(String friendEmail){
         // If email address doesn't exist, display
-        if(!cloud.userExists(friend)) {
+        /*if(!cloud.userExists(friend)) {
             // TODO: log error;
             return;
-        }
+        }*/
 
         // add this email address to current user's pending friend list
-        cloud.addPendingFriend(this.user.getUserName(), friend);
+        cloud.addPendingFriend(this.user.getUserEmail(), friendEmail);
         // add this request to the target friend's request list
-        cloud.addPendingRequest(friend, this.user.getUserName());
+        cloud.addPendingRequest(friendEmail, this.user.getUserEmail());
     }
 
     /**
@@ -49,11 +62,11 @@ public class FriendManager {
      * @param friend friend's email address
      */
     public void acceptFriendRequest(String friend){
-        cloud.removePendingFriend(this.user.getUserName(), friend);
-        cloud.addFriend(this.user.getUserName(), friend);
+        cloud.removePendingRequest(this.user.getUserEmail(), friend);
+        cloud.addFriend(this.user.getUserEmail(), friend);
 
-        cloud.removePendingFriend(friend, this.user.getUserName());
-        cloud.addFriend(friend, this.user.getUserName());
+        cloud.removePendingFriend(friend, this.user.getUserEmail());
+        cloud.addFriend(friend, this.user.getUserEmail());
     }
 
     /**

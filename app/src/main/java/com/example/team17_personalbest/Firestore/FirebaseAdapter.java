@@ -4,13 +4,16 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +29,6 @@ public class FirebaseAdapter {
 
     FirebaseFirestore db;
 
-    private String TEST_COLLECTION = "test";
     private String CHAT_COLLECTION = "chats";
 
     private String USER_ID = "u_id";
@@ -34,11 +36,17 @@ public class FirebaseAdapter {
     private String USER_EMAIL = "u_email";
 
     private String USER_COLLECTION = "users";
+    private String PENDING_COLLECTION = "pending";
+    private String REQUEST_COLLECTION = "requests";
+    private String FRIEND_COLLECTION = "friends";
     private String MESSAGES_COLLECTION = "messages";
     String FROM_KEY = "from";
     String TEXT_KEY = "text";
 
-    private HashMap<String, Pair<String,String>> users;     // Users in database
+    private HashMap<String, String> users;     // Users in database
+    private HashMap<String, String> friends;
+    private HashMap<String, String> pendingFriends;
+    private HashMap<String, String> pendingRequests;
 
     /**
      * Constructor that initializes users and database
@@ -47,6 +55,9 @@ public class FirebaseAdapter {
     public FirebaseAdapter(FirebaseFirestore firebaseFirestore) {
         db = firebaseFirestore;
         users = new HashMap<>();
+        friends = new HashMap<>();
+        pendingRequests = new HashMap<>();
+        pendingFriends = new HashMap<>();
     }
 
     /**
@@ -65,20 +76,30 @@ public class FirebaseAdapter {
         user.put(USER_EMAIL, email);
 
         db.collection(USER_COLLECTION)
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .document(email)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                        users.put(uid, new Pair<>(name, email));
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                Log.d(TAG, "User exists!");
+                            } else {
+                                Log.d(TAG, "User does not exist!");
+                                db.collection(USER_COLLECTION)
+                                        .document(email)
+                                        .set(user);
+                            }
+                            getUsersFromDB();
+                            getFriendsFromDB(email);
+                            getPendingFriendsFromDB(email);
+                            getPendingRequestsFromDB(email);
+                        } else {
+                            Log.d(TAG, "Failed with: ", task.getException());
+                        }
                     }
                 });
+
     }
 
     /**
@@ -106,33 +127,156 @@ public class FirebaseAdapter {
         return result;
     }
 
-    /**
-     * Used for adding values to test collection
-     * @param test1
-     * @param test2
-     * @param test3
-     */
-    public void addTest(String test1, String test2, int test3){
-        HashMap<String, Object> test = new HashMap<>();
+    // TODO: getter for user name on cloud
+    public String getUserName(String userEmail) {
+        if(users.containsKey(userEmail)){
+            return users.get(userEmail);
+        }
+        return "";
+    }
 
-        test.put("test1", test1);
-        test.put("test2", test2);
-        test.put("test3", test3);
+    // TODO: Getters for information about friends on cloud
+    public void getUsersFromDB(){
+        db.collection(USER_COLLECTION)
+                .addSnapshotListener((newFriendSnapShot, error) -> {
+                    if (newFriendSnapShot != null && !newFriendSnapShot.isEmpty()) {
+                        List<DocumentSnapshot> documentChanges = newFriendSnapShot.getDocuments();
 
-        db.collection(TEST_COLLECTION)
-                .add(test)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
+                        documentChanges.forEach(change -> {
+                            users.put((String) change.getId(), (String) change.get(USER_NAME));
+                            System.out.println("USERS: " + change.getId());
+                        });
+                        //System.out.println("AIZEDAFD: " + users.size());
                     }
                 });
+    }
+    public void getFriendsFromDB(String userEmail){
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(FRIEND_COLLECTION)
+                .addSnapshotListener((newFriendSnapShot, error) -> {
+                    if (newFriendSnapShot != null && !newFriendSnapShot.isEmpty()) {
+                        ArrayList<String> newFriendList = new ArrayList<>();
+                        List<DocumentSnapshot> documentChanges = newFriendSnapShot.getDocuments();
+                        documentChanges.forEach(change -> {
+                            friends.put((String) change.getId(), (String) change.get("status"));
+                            System.out.println("FRIENDS: " + change.getId());
+                        });
+                    }
+                });
+    }
+    public void getPendingFriendsFromDB(String userEmail){
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(PENDING_COLLECTION)
+                .addSnapshotListener((newFriendSnapShot, error) -> {
+                    if (newFriendSnapShot != null && !newFriendSnapShot.isEmpty()) {
+                        ArrayList<String> newFriendList = new ArrayList<>();
+                        List<DocumentSnapshot> documentChanges = newFriendSnapShot.getDocuments();
+                        documentChanges.forEach(change -> {
+                            pendingFriends.put((String) change.getId(), (String) change.get("status"));
+                            System.out.println("PENDING: " + change.getId());
+                        });
+                    }
+                });
+    }
+    public void getPendingRequestsFromDB(String userEmail){
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(REQUEST_COLLECTION)
+                .addSnapshotListener((newFriendSnapShot, error) -> {
+                    if (newFriendSnapShot != null && !newFriendSnapShot.isEmpty()) {
+                        ArrayList<String> newFriendList = new ArrayList<>();
+                        List<DocumentSnapshot> documentChanges = newFriendSnapShot.getDocuments();
+                        documentChanges.forEach(change -> {
+                            pendingRequests.put((String) change.getId(), (String) change.get("status"));
+                            System.out.println("REQUESTS: " + change.getId());
+                        });
+                    }
+                });
+    }
+
+    // TODO: These methods updates friends information on the cloud
+    public void addFriend(String userEmail, String friendEmail){
+        // add "friend" to friendList of "user"
+        HashMap<String, String> friend = new HashMap<>();
+        friend.put("status", "friends");
+
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(FRIEND_COLLECTION)
+                .document(friendEmail)
+                .set(friend);
+    }
+    public void addPendingFriend(String userEmail, String friendEmail){
+        // add "friend" to pendingFriendList of "user"
+        HashMap<String, String> friend = new HashMap<>();
+        friend.put("status", "pending");
+
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(PENDING_COLLECTION)
+                .document(friendEmail)
+                .set(friend);
+    }
+    public void addPendingRequest(String userEmail, String friendEmail){
+        // add "friend" to requestList of "user"
+        HashMap<String, String> friend = new HashMap<>();
+        friend.put("status", "requested");
+
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(REQUEST_COLLECTION)
+                .document(friendEmail)
+                .set(friend);
+    }
+    public void removeFriend(String userEmail, String friendEmail){
+        // remove "friend" from friendList of "user"
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(FRIEND_COLLECTION)
+                .document(friendEmail)
+                .delete();
+    }
+    public void removePendingFriend(String userEmail, String friendEmail){
+        // remove "friend" from pendingFriendList of "user"
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(PENDING_COLLECTION)
+                .document(friendEmail)
+                .delete();
+    }
+    public void removePendingRequest(String userEmail, String friendEmail){
+        // remove "friend" from requestList of "user"
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .collection(REQUEST_COLLECTION)
+                .document(friendEmail)
+                .delete();
+    }
+
+    // Getters for friendLists
+
+
+    public HashMap<String, String> getPendingRequests() {
+        return pendingRequests;
+    }
+
+    public HashMap<String, String> getPendingFriends() {
+        return pendingFriends;
+    }
+
+    public HashMap<String, String> getFriends() {
+        return friends;
+    }
+
+    public HashMap<String, String> getUsers() {
+        return users;
+    }
+
+    // TODO: check if user exists
+    public boolean userExists(String email) {
+        return true;
     }
 
     /**

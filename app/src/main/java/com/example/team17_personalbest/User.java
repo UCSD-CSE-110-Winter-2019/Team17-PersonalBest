@@ -6,6 +6,7 @@ import com.example.team17_personalbest.Step.StepHistory;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Observable;
 
 public class User extends Observable {
@@ -25,9 +26,9 @@ public class User extends Observable {
     private boolean hasBeenCongratulatedToday;
 
     // friend information
-    private ArrayList<String> friends;
-    private ArrayList<String> pendingFriends;
-    private ArrayList<String> pendingRequests;
+    private HashMap<String, String> friends;
+    private HashMap<String, String>  pendingFriends;
+    private HashMap<String, String>  pendingRequests;
 
     /**
      * Constructor
@@ -193,12 +194,15 @@ public class User extends Observable {
     public String getUserName(){ return userName; }
     public void setUserName(String name){ this.userName = name; }
 
-    public ArrayList<String> getFriends(){ return this.friends; }
-    public ArrayList<String> getPendingFriends(){ return this.pendingFriends; }
-    public ArrayList<String> getPendingRequests(){ return this.pendingRequests; }
-    public void setFriends(ArrayList<String> friends){ this.friends = friends; }
-    public void setPendingFriends(ArrayList<String> pendingFriends){ this.pendingFriends = pendingFriends; }
-    public void setPendingRequests(ArrayList<String> pendingRequests){ this.pendingRequests = pendingRequests; }
+    public String getUserEmail(){ return userEmail; }
+    public void setUserEmail(String email){ this.userEmail = email; }
+
+    public HashMap<String, String>  getFriends(){ return this.friends; }
+    public HashMap<String, String>  getPendingFriends(){ return this.pendingFriends; }
+    public HashMap<String, String>  getPendingRequests(){ return this.pendingRequests; }
+    public void setFriends(HashMap<String, String>  friends){ this.friends = friends; }
+    public void setPendingFriends(HashMap<String, String>  pendingFriends){ this.pendingFriends = pendingFriends; }
+    public void setPendingRequests(HashMap<String, String>  pendingRequests){ this.pendingRequests = pendingRequests; }
 
 
     public boolean isHasBeenCongratulatedToday() {
