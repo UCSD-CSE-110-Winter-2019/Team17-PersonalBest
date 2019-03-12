@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                     user.endPlannedWalk();
                 }
             }
-        });a
+        });
 
         // set goal button controller
         Button setGoal = findViewById(R.id.create_goal);
