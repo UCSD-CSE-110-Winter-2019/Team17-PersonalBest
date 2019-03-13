@@ -3,13 +3,18 @@ package com.example.team17_personalbest;
 import com.example.team17_personalbest.Step.Day;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.StepHistory;
+import com.example.team17_personalbest.Step.StepObserver;
+import com.example.team17_personalbest.Step.StepSubject;
+import com.example.team17_personalbest.Time.TimeObserver;
+import com.example.team17_personalbest.Time.TimeSubject;
+import com.example.team17_personalbest.Time.UserNewDayManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Observable;
 
-public class User extends Observable {
+public class User extends Observable implements StepSubject, TimeSubject {
 
     // basic information
     private String userName;
@@ -21,7 +26,6 @@ public class User extends Observable {
     private int totalDailySteps;
     private PlannedWalk currentWalk;
     private StepHistory stepHistory;
-    private Day currentDayStats;
     private boolean hasBeenEncouragedToday;
     private boolean hasBeenCongratulatedToday;
 
@@ -29,6 +33,10 @@ public class User extends Observable {
     private HashMap<String, String> friends;
     private HashMap<String, String>  pendingFriends;
     private HashMap<String, String>  pendingRequests;
+
+    // observers
+    private ArrayList<StepObserver> stepObservers;
+    private ArrayList<TimeObserver> timeObservers;
 
     /**
      * Constructor
@@ -42,10 +50,13 @@ public class User extends Observable {
         this.goal = 5000;
         this.totalDailySteps = 0;
         this.stepHistory = new StepHistory();
-        this.currentDayStats = new Day(calendar);
-        this.stepHistory.updateHist(currentDayStats);
+        this.stepHistory.updateHist(new Day(calendar));
         this.hasBeenEncouragedToday = false;
         this.hasBeenCongratulatedToday = false;
+        this.stepObservers = new ArrayList<StepObserver>();
+        addStepObserver(this.stepHistory);
+        this.timeObservers = new ArrayList<TimeObserver>();
+        addTimeObserver(new UserNewDayManager());
     }
 
     /** Copy constructor */
@@ -56,33 +67,27 @@ public class User extends Observable {
         this.totalDailySteps = other.totalDailySteps;
         this.currentWalk = other.currentWalk;
         this.stepHistory = other.stepHistory;
-        this.currentDayStats = stepHistory.getCurrentDay();
         this.hasBeenEncouragedToday = other.hasBeenEncouragedToday;
         this.hasBeenCongratulatedToday = other.hasBeenCongratulatedToday;
+        this.stepObservers = new ArrayList<StepObserver>();
+        addStepObserver(this.stepHistory);
+        this.timeObservers = new ArrayList<TimeObserver>();
+
     }
 
 
     /**
-     * Description: Adds the number of steps to totalDailySteps.
-     *              Update planned steps or normal steps for the day.
-     *              If there is a PlannedWalk in progress, adds steps to the PlannedWalk
+     * Description: Walks some steps at the specified time
      * Inputs: steps - the number of steps the user walked
      *         calendar - the current time
      */
     public void walk(int steps, Calendar calendar){
-        if(isNewDay(calendar))
-            finishDay(calendar);
-
         this.totalDailySteps += steps;
-        if (currentWalk != null){
-            currentWalk.walk(steps, calendar);
-            currentDayStats.addPlannedSteps(steps);
-        }
-        else{
-            currentDayStats.addNormalSteps(steps);
-        }
+
+        notifyTimeObservers(calendar);
         setChanged();
         notifyObservers(this);
+        notifyStepObservers(steps, calendar);
     }
 
 
@@ -92,58 +97,11 @@ public class User extends Observable {
      *         calendar - the current time
      */
     public void updateDailySteps(long totalDailySteps, Calendar calendar){
-        if(isNewDay(calendar))
-            finishDay(calendar);
-
+        notifyTimeObservers(calendar);
         int steps = (int) totalDailySteps - this.totalDailySteps;
         walk(steps, calendar);
     }
 
-
-    /**
-     * Description: Starts a PlannedWalk by initializing a new PlannedWalk
-     * Inputs:  calendar - the current time
-     */
-    public void startPlannedWalk(Calendar calendar) {
-        this.currentWalk = new PlannedWalk(this.height, calendar.getTimeInMillis());
-        setChanged();
-        notifyObservers(this);
-    }
-
-
-    /**
-     * Description: Ends a PlannedWalk by setting currentWalk to null
-     */
-    public void endPlannedWalk() {
-        this.currentWalk = null;
-        setChanged();
-        notifyObservers(this);
-    }
-
-
-    /**
-     * Description: Adds the previous day to stepHistory and starts a new day
-     * Inputs:  calendar - the current time
-     */
-    public void finishDay(Calendar calendar){
-        endPlannedWalk();
-        currentDayStats = new Day(calendar);
-        stepHistory.updateHist(currentDayStats);
-        hasBeenEncouragedToday = false;
-        hasBeenCongratulatedToday = false;
-        totalDailySteps = 0;
-    }
-
-
-    /**
-     * Description: Returns true if it's a new day
-     * Inputs:  calendar - the current time
-     */
-    private boolean isNewDay(Calendar calendar){
-        int oldDay = currentDayStats.getDay();
-        int currDay = calendar.get(Calendar.DAY_OF_WEEK);
-        return oldDay != currDay;
-    }
 
 
     /**
@@ -178,18 +136,25 @@ public class User extends Observable {
     }
     public void setTotalDailySteps(int totalDailySteps) { this.totalDailySteps = totalDailySteps; }
 
-    public Day getCurrentDayStats() { return currentDayStats; }
-    public void setCurrentDayStats(Day currentDayStats) { this.currentDayStats = currentDayStats; }
-
     public StepHistory getStepHistory() {
         return stepHistory;
     }
-    public void setStepHistory(StepHistory stepHistory) { this.stepHistory = stepHistory; }
+    public void setStepHistory(StepHistory stepHistory) {
+        this.stepObservers.remove(this.stepHistory);
+        this.stepHistory = stepHistory;
+        addStepObserver(this.stepHistory);
+    }
 
     public PlannedWalk getCurrentWalk() {
         return currentWalk;
     }
-    public void setCurrentWalk(PlannedWalk currentWalk) { this.currentWalk = currentWalk; }
+    public void setCurrentWalk(PlannedWalk currentWalk) {
+        this.stepObservers.remove(this.currentWalk);
+        this.currentWalk = currentWalk;
+        addStepObserver(this.currentWalk);
+        setChanged();
+        notifyObservers(this);
+    }
 
     public String getUserName(){ return userName; }
     public void setUserName(String name){ this.userName = name; }
@@ -219,4 +184,28 @@ public class User extends Observable {
     }
 
 
+    @Override
+    public void addStepObserver(StepObserver observer) {
+        if (observer != null)
+            this.stepObservers.add(observer);
+    }
+
+    @Override
+    public void notifyStepObservers(int steps, Calendar calendar) {
+        for (StepObserver observer: stepObservers) {
+            observer.updateSteps(steps, this, calendar);
+        }
+    }
+
+    @Override
+    public void addTimeObserver(TimeObserver observer) {
+        timeObservers.add(observer);
+    }
+
+    @Override
+    public void notifyTimeObservers(Calendar calendar) {
+        for (TimeObserver observer: timeObservers) {
+            observer.updateTime(calendar, this);
+        }
+    }
 }
