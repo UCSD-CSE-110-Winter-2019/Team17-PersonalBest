@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.example.team17_personalbest.Firestore.CloudStroage;
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.Day;
@@ -60,6 +59,8 @@ public class ShowFriendsActivity extends AppCompatActivity {
                                 return true;
                             case R.id.navigation_history:
                                 launchHistory();
+                                return true;
+                            case R.id.navigation_friends:
                                 return true;
                         }
                         return false;

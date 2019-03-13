@@ -1,16 +1,7 @@
 package com.example.team17_personalbest.Friends;
 
-import android.util.Pair;
-
-import com.example.team17_personalbest.Firestore.CloudStroage;
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.User;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 public class FriendManager {
 
