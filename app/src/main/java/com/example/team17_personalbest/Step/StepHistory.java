@@ -1,9 +1,11 @@
 package com.example.team17_personalbest.Step;
 
+import com.example.team17_personalbest.User;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class StepHistory {
+public class StepHistory implements StepObserver {
 
     private ArrayList<Day> hist;
 
@@ -18,14 +20,14 @@ public class StepHistory {
     public ArrayList<Day> getHist(){
         ArrayList<Day> dayList = new ArrayList<>();
         int i = hist.size() - 1;
-        for(int x = 0; x < 7; x++){
+        for(int x = 0; x < 28; x++){
             dayList.add(new Day(x + 1));
         }
         while(i < hist.size() && i >= 0){
             Day currDay = hist.get(i);
             dayList.set(currDay.getDay() - 1, currDay);
             if(currDay.getDay() == Calendar.SUNDAY){ // if Sunday is found, break the loop
-                break;
+                //break;
             }
             i--;
         }
@@ -69,5 +71,14 @@ public class StepHistory {
 
     public Day getCurrentDay(){
         return hist.get(hist.size() - 1);
+    }
+
+    @Override
+    public void updateSteps(int steps, User user, Calendar calendar) {
+        Day today = getCurrentDay();
+        if (user.getCurrentWalk() == null)
+            today.addNormalSteps(steps);
+        else
+            today.addPlannedSteps(steps);
     }
 }

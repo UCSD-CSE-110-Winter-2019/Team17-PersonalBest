@@ -38,7 +38,7 @@ public class CloudStroage extends Observable {
                 .document(this.user.getUserName())
                 .collection("requests");
 
-        this.initFriendUpdateListener();
+        //this.initFriendUpdateListener();
 
     }
 
@@ -87,7 +87,7 @@ public class CloudStroage extends Observable {
      * Initialize listener for the friend
      * Whenever the cloud updates anything about friends, user will also be updated
      */
-    private void initFriendUpdateListener() {
+    /*private void initFriendUpdateListener() {
         this.friends.addSnapshotListener((newFriendSnapShot, error) -> {
             if (newFriendSnapShot != null && !newFriendSnapShot.isEmpty()) {
                 ArrayList<String> newFriendList = new ArrayList<>();
@@ -121,6 +121,6 @@ public class CloudStroage extends Observable {
                 this.user.setPendingRequests(newRequestList);
             }
         });
-    }
+    }*/
 
 }

@@ -43,6 +43,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -139,6 +140,20 @@ public class MainActivity extends AppCompatActivity {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         db = new FirebaseAdapter(firebaseFirestore);
 
+        // start walk button controller
+        walkButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                PlannedWalk currWalk = user.getCurrentWalk();
+                if(currWalk == null) {
+                    PlannedWalk walk = new PlannedWalk(user.getHeight(), fitnessService.getTime().getTimeInMillis());
+                    user.setCurrentWalk(walk);
+                }else{
+                    user.setCurrentWalk(null);
+                }
+            }
+        });
 
         // set goal button controller
         Button setGoal = findViewById(R.id.create_goal);
@@ -214,6 +229,8 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             if(db != null){
                 db.addUser(account.getId(), account.getDisplayName(), account.getEmail());
+                user.setUserEmail(account.getEmail());
+                user.setUserName(account.getDisplayName());
             }
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -323,15 +340,22 @@ public class MainActivity extends AppCompatActivity {
 
         String stepHist = gson.toJson(user.getStepHistory());
         String plannedWalk = gson.toJson(user.getCurrentWalk());
-        String day = gson.toJson(user.getCurrentDayStats());
+        String friends = gson.toJson(user.getFriends());
+        String pendingFriends = gson.toJson(user.getPendingFriends());
+        String pendingRequests = gson.toJson(user.getPendingRequests());
         edit.putInt("height", user.getHeight());
         edit.putInt("goal", user.getGoal());
         edit.putInt("daily_steps", user.getTotalDailySteps());
         edit.putBoolean("encouraged", user.isHasBeenEncouragedToday());
         edit.putBoolean("congratulated", user.isHasBeenCongratulatedToday());
+        edit.putString("username", user.getUserName());
+        edit.putString("useremail", user.getUserEmail());
         edit.putString("stepHist", stepHist);
         edit.putString("plannedWalk", plannedWalk);
-        edit.putString("day", day);
+        edit.putString("friends", friends);
+        edit.putString("pendingFriends", pendingFriends);
+        edit.putString("pendingRequests", pendingRequests);
+        user.getStepHistory().printHist();
 
         edit.apply();
     }
@@ -346,19 +370,21 @@ public class MainActivity extends AppCompatActivity {
         if (height == 0){
             user = null;
         } else {
-
             user= new User(height, Calendar.getInstance());
             StepHistory stepHistory = gson.fromJson(sharedPreferences.getString("stepHist", ""), StepHistory.class);
             PlannedWalk plannedWalk = gson.fromJson(sharedPreferences.getString("plannedWalk", ""), PlannedWalk.class);
             Day day = gson.fromJson(sharedPreferences.getString("day", ""), Day.class);
+            HashMap<String, String> friends = gson.fromJson(sharedPreferences.getString("friends", ""), HashMap.class);
+            HashMap<String, String>  pendingFriends = gson.fromJson(sharedPreferences.getString("friends", ""), HashMap.class);
+            HashMap<String, String>  pendingRequests = gson.fromJson(sharedPreferences.getString("friends", ""), HashMap.class);
             user.setGoal(sharedPreferences.getInt("goal", 0));
             user.setTotalDailySteps(sharedPreferences.getInt("daily_steps", 0));
             user.setHasBeenEncouragedToday(sharedPreferences.getBoolean("encouraged", false));
             user.setHasBeenCongratulatedToday(sharedPreferences.getBoolean("congratulated",false));
+            user.setUserName(sharedPreferences.getString("username", ""));
+            user.setUserEmail(sharedPreferences.getString("useremail", ""));
             user.setStepHistory(stepHistory);
             user.setCurrentWalk(plannedWalk);
-            user.setCurrentDayStats(day);
-
         }
     }
 

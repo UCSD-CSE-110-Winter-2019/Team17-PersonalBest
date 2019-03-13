@@ -26,10 +26,15 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.HashMap;
 
 public class ShowHistoryActivity extends AppCompatActivity {
 
-    private BarChart barChart;
+    private BarChart barChart1;
+    private BarChart barChart2;
+    private BarChart barChart3;
+    private BarChart barChart4;
     private User user;
 
     @Override
@@ -37,10 +42,17 @@ public class ShowHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_history);
 
-        barChart = (BarChart) findViewById(R.id.bar_graph);
+        barChart1 = findViewById(R.id.bar_graph);
+        barChart2 = findViewById(R.id.bar_graph2);
+        barChart3 = findViewById(R.id.bar_graph3);
+        barChart4 = findViewById(R.id.bar_graph4);
         loadUser();
-        showHistory(user.getStepHistory().getHist());
-        user.getStepHistory().printHist();
+        ArrayList<Day> hist = user.getStepHistory().getHist();
+        showHistory(hist.subList(0,7), barChart1);
+        showHistory(hist.subList(7,14), barChart2);
+        showHistory(hist.subList(14,21), barChart3);
+        showHistory(hist.subList(21,28), barChart4);
+        //user.getStepHistory().printHist();
 
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
@@ -66,12 +78,14 @@ public class ShowHistoryActivity extends AppCompatActivity {
 
     }
 
-    public void showHistory(ArrayList<Day> hist){
+    public void showHistory(List<Day> hist, BarChart barChart){
         // Get data from hist
         ArrayList<BarEntry> barEntries = new ArrayList<>();
+        ArrayList<String> days = new ArrayList<>();
         for(int i = 0; i < hist.size(); i++){
             BarEntry entry = new BarEntry(i, new float[]{hist.get(i).getNormalSteps(), hist.get(i).getPlannedSteps()});
             barEntries.add(entry);
+            days.add(Integer.toString( hist.get(i).getDay()));
         }
 
         // Format data
@@ -81,7 +95,8 @@ public class ShowHistoryActivity extends AppCompatActivity {
         barDataSet.setValueFormatter(new StackedValueFormatter(true, "", 0));
 
         // Format axes
-        final String[] axes = new String[]{"Sun", "Mon","Tue","Wed","Thu","Fri","Sat"};
+        final String[] axes = days.toArray(new String[0]);
+
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
@@ -101,7 +116,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         BarData barData = new BarData(barDataSet);
         barChart.setData(barData);
         barChart.setVisibleYRange(0, (float)user.getGoal() + 1000, YAxis.AxisDependency.LEFT);
-        barChart.setExtraOffsets(20,20,20,20);
+        barChart.setExtraOffsets(10,10,10,10);
         barChart.setDescription(desc);
         barChart.getXAxis().setDrawGridLines(false);
         barChart.setFitBars(true);
@@ -111,26 +126,27 @@ public class ShowHistoryActivity extends AppCompatActivity {
      * Loads the user settings and history from sharedPreferences
      */
     public void loadUser() {
-
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         Gson gson = new Gson();
         int height = sharedPreferences.getInt("height", 0);
         if (height == 0){
             user = null;
         } else {
-
             user= new User(height, Calendar.getInstance());
             StepHistory stepHistory = gson.fromJson(sharedPreferences.getString("stepHist", ""), StepHistory.class);
             PlannedWalk plannedWalk = gson.fromJson(sharedPreferences.getString("plannedWalk", ""), PlannedWalk.class);
             Day day = gson.fromJson(sharedPreferences.getString("day", ""), Day.class);
+            HashMap<String, String> friends = gson.fromJson(sharedPreferences.getString("friends", ""), HashMap.class);
+            HashMap<String, String>  pendingFriends = gson.fromJson(sharedPreferences.getString("friends", ""), HashMap.class);
+            HashMap<String, String>  pendingRequests = gson.fromJson(sharedPreferences.getString("friends", ""), HashMap.class);
             user.setGoal(sharedPreferences.getInt("goal", 0));
             user.setTotalDailySteps(sharedPreferences.getInt("daily_steps", 0));
             user.setHasBeenEncouragedToday(sharedPreferences.getBoolean("encouraged", false));
             user.setHasBeenCongratulatedToday(sharedPreferences.getBoolean("congratulated",false));
+            user.setUserName(sharedPreferences.getString("username", ""));
+            user.setUserEmail(sharedPreferences.getString("useremail", ""));
             user.setStepHistory(stepHistory);
             user.setCurrentWalk(plannedWalk);
-            user.setCurrentDayStats(day);
-
         }
     }
 
