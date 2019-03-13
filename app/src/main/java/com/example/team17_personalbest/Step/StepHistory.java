@@ -20,14 +20,14 @@ public class StepHistory implements StepObserver {
     public ArrayList<Day> getHist(){
         ArrayList<Day> dayList = new ArrayList<>();
         int i = hist.size() - 1;
-        for(int x = 0; x < 7; x++){
+        for(int x = 0; x < 28; x++){
             dayList.add(new Day(x + 1));
         }
         while(i < hist.size() && i >= 0){
             Day currDay = hist.get(i);
             dayList.set(currDay.getDay() - 1, currDay);
             if(currDay.getDay() == Calendar.SUNDAY){ // if Sunday is found, break the loop
-                break;
+                //break;
             }
             i--;
         }
