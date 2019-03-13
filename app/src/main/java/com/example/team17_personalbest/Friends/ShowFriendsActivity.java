@@ -213,7 +213,6 @@ public class ShowFriendsActivity extends AppCompatActivity {
 
         String stepHist = gson.toJson(user.getStepHistory());
         String plannedWalk = gson.toJson(user.getCurrentWalk());
-        String day = gson.toJson(user.getCurrentDayStats());
         String friends = gson.toJson(user.getFriends());
         String pendingFriends = gson.toJson(user.getPendingFriends());
         String pendingRequests = gson.toJson(user.getPendingRequests());
@@ -226,7 +225,6 @@ public class ShowFriendsActivity extends AppCompatActivity {
         edit.putString("useremail", user.getUserEmail());
         edit.putString("stepHist", stepHist);
         edit.putString("plannedWalk", plannedWalk);
-        edit.putString("day", day);
         edit.putString("friends", friends);
         edit.putString("pendingFriends", pendingFriends);
         edit.putString("pendingRequests", pendingRequests);
@@ -259,7 +257,6 @@ public class ShowFriendsActivity extends AppCompatActivity {
             user.setUserEmail(sharedPreferences.getString("useremail", ""));
             user.setStepHistory(stepHistory);
             user.setCurrentWalk(plannedWalk);
-            user.setCurrentDayStats(day);
 
         }
     }

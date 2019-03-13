@@ -32,13 +32,14 @@ public class UserTest {
     public void test_plannedWalk(){
         // Walking 100 planned steps
         User user = new User(100, Calendar.getInstance());
-        user.startPlannedWalk(Calendar.getInstance());
+        PlannedWalk walk = new PlannedWalk(user.getHeight(), Calendar.getInstance().getTimeInMillis());
+        user.setCurrentWalk(walk);
         user.walk(100, Calendar.getInstance());
         PlannedWalk plannedWalk = user.getCurrentWalk();
         assertEquals(plannedWalk.getSteps(), 100);
 
         // Ending walk
-        user.endPlannedWalk();
+        user.setCurrentWalk(null);
         assertEquals(user.getCurrentWalk(), null);
 
     }
@@ -74,9 +75,10 @@ public class UserTest {
         assertEquals(user.isHasBeenCongratulatedToday(), true);
 
         user.walk(100, tuesday);
-        user.startPlannedWalk(tuesday);
+        PlannedWalk walk = new PlannedWalk(user.getHeight(), tuesday.getTimeInMillis());
+        user.setCurrentWalk(walk);
         user.walk(150, tuesday);
-        user.finishDay(wednesday);
+        user.walk(100, wednesday);
 
         StepHistory stepHistory = user.getStepHistory();
         assertEquals(stepHistory.getHist().get(2).getNormalSteps(), 100);
@@ -102,7 +104,8 @@ public class UserTest {
         User user = new User(100, tuesday);
         user.walk(100, tuesday);
         user.walk(200, wednesday);
-        user.startPlannedWalk(wednesday);
+        PlannedWalk walk = new PlannedWalk(user.getHeight(), wednesday.getTimeInMillis());
+        user.setCurrentWalk(walk);
         user.walk(250, wednesday);
         user.walk(300, thursday);
         StepHistory stepHistory = user.getStepHistory();

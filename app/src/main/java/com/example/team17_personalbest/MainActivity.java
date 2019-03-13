@@ -147,9 +147,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PlannedWalk currWalk = user.getCurrentWalk();
                 if(currWalk == null) {
-                    user.startPlannedWalk(fitnessService.getTime());
+                    PlannedWalk walk = new PlannedWalk(user.getHeight(), fitnessService.getTime().getTimeInMillis());
+                    user.setCurrentWalk(walk);
                 }else{
-                    user.endPlannedWalk();
+                    user.setCurrentWalk(null);
                 }
             }
         });
@@ -339,7 +340,6 @@ public class MainActivity extends AppCompatActivity {
 
         String stepHist = gson.toJson(user.getStepHistory());
         String plannedWalk = gson.toJson(user.getCurrentWalk());
-        String day = gson.toJson(user.getCurrentDayStats());
         String friends = gson.toJson(user.getFriends());
         String pendingFriends = gson.toJson(user.getPendingFriends());
         String pendingRequests = gson.toJson(user.getPendingRequests());
@@ -352,10 +352,10 @@ public class MainActivity extends AppCompatActivity {
         edit.putString("useremail", user.getUserEmail());
         edit.putString("stepHist", stepHist);
         edit.putString("plannedWalk", plannedWalk);
-        edit.putString("day", day);
         edit.putString("friends", friends);
         edit.putString("pendingFriends", pendingFriends);
         edit.putString("pendingRequests", pendingRequests);
+        user.getStepHistory().printHist();
 
         edit.apply();
     }
@@ -385,8 +385,6 @@ public class MainActivity extends AppCompatActivity {
             user.setUserEmail(sharedPreferences.getString("useremail", ""));
             user.setStepHistory(stepHistory);
             user.setCurrentWalk(plannedWalk);
-            user.setCurrentDayStats(day);
-
         }
     }
 
