@@ -11,7 +11,7 @@ public class Day {
 
 
     public Day(Calendar calendar){
-        day = calendar.get(Calendar.DAY_OF_WEEK);
+        day = calendar.get(Calendar.DATE);
         plannedSteps = 0;
         normalSteps = 0;
     }

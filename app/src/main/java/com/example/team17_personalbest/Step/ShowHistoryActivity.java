@@ -26,10 +26,14 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ShowHistoryActivity extends AppCompatActivity {
 
-    private BarChart barChart;
+    private BarChart barChart1;
+    private BarChart barChart2;
+    private BarChart barChart3;
+    private BarChart barChart4;
     private User user;
 
     @Override
@@ -37,9 +41,16 @@ public class ShowHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_history);
 
-        barChart = (BarChart) findViewById(R.id.bar_graph);
+        barChart1 = findViewById(R.id.bar_graph);
+        barChart2 = findViewById(R.id.bar_graph2);
+        barChart3 = findViewById(R.id.bar_graph3);
+        barChart4 = findViewById(R.id.bar_graph4);
         loadUser();
-        showHistory(user.getStepHistory().getHist());
+        ArrayList<Day> hist = user.getStepHistory().getHist();
+        showHistory(hist.subList(0,7), barChart1);
+        showHistory(hist.subList(7,14), barChart2);
+        showHistory(hist.subList(14,21), barChart3);
+        showHistory(hist.subList(21,28), barChart4);
         user.getStepHistory().printHist();
 
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -66,12 +77,14 @@ public class ShowHistoryActivity extends AppCompatActivity {
 
     }
 
-    public void showHistory(ArrayList<Day> hist){
+    public void showHistory(List<Day> hist, BarChart barChart){
         // Get data from hist
         ArrayList<BarEntry> barEntries = new ArrayList<>();
+        ArrayList<String> days = new ArrayList<>();
         for(int i = 0; i < hist.size(); i++){
             BarEntry entry = new BarEntry(i, new float[]{hist.get(i).getNormalSteps(), hist.get(i).getPlannedSteps()});
             barEntries.add(entry);
+            days.add(Integer.toString( hist.get(i).getDay()));
         }
 
         // Format data
@@ -81,7 +94,8 @@ public class ShowHistoryActivity extends AppCompatActivity {
         barDataSet.setValueFormatter(new StackedValueFormatter(true, "", 0));
 
         // Format axes
-        final String[] axes = new String[]{"Sun", "Mon","Tue","Wed","Thu","Fri","Sat"};
+        final String[] axes = days.toArray(new String[0]);
+
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
@@ -101,7 +115,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         BarData barData = new BarData(barDataSet);
         barChart.setData(barData);
         barChart.setVisibleYRange(0, (float)user.getGoal() + 1000, YAxis.AxisDependency.LEFT);
-        barChart.setExtraOffsets(20,20,20,20);
+        barChart.setExtraOffsets(10,10,10,10);
         barChart.setDescription(desc);
         barChart.getXAxis().setDrawGridLines(false);
         barChart.setFitBars(true);
