@@ -51,7 +51,7 @@ public class ShowHistoryActivity extends AppCompatActivity {
         showHistory(hist.subList(7,14), barChart2);
         showHistory(hist.subList(14,21), barChart3);
         showHistory(hist.subList(21,28), barChart4);
-        user.getStepHistory().printHist();
+        //user.getStepHistory().printHist();
 
         final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
