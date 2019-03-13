@@ -1,10 +1,12 @@
 package com.example.team17_personalbest.Step;
 
+import com.example.team17_personalbest.User;
+
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Calendar;
 
-public class PlannedWalk {
+public class PlannedWalk implements StepObserver{
 
     int steps;
     float distance;
@@ -70,5 +72,11 @@ public class PlannedWalk {
 
     public long getTime(){
         return (this.time - this.startTime);
+    }
+
+
+    @Override
+    public void updateSteps(int steps, User user, Calendar calendar) {
+        walk(steps, calendar);
     }
 }

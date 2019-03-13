@@ -1,9 +1,11 @@
 package com.example.team17_personalbest.Step;
 
+import com.example.team17_personalbest.User;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class StepHistory {
+public class StepHistory implements StepObserver {
 
     private ArrayList<Day> hist;
 
@@ -69,5 +71,14 @@ public class StepHistory {
 
     public Day getCurrentDay(){
         return hist.get(hist.size() - 1);
+    }
+
+    @Override
+    public void updateSteps(int steps, User user, Calendar calendar) {
+        Day today = getCurrentDay();
+        if (user.getCurrentWalk() == null)
+            today.addNormalSteps(steps);
+        else
+            today.addPlannedSteps(steps);
     }
 }
