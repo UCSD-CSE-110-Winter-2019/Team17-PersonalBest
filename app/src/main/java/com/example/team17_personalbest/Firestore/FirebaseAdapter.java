@@ -22,7 +22,7 @@ import static android.support.constraint.Constraints.TAG;
 /**
  * Class that handles interactions with Firestore database
  */
-public class FirebaseAdapter {
+public class FirebaseAdapter implements IDatabase {
 
     FirebaseFirestore db;
 
@@ -63,6 +63,7 @@ public class FirebaseAdapter {
      * @param name
      * @param email
      */
+    @Override
     public void addUser(String uid, String name, String email){
         HashMap<String, Object> user = new HashMap<>();
         user.put(USER_ID, uid);
@@ -97,12 +98,12 @@ public class FirebaseAdapter {
 
     }
 
-
     /**
      * Get the username of a user given their email
      * @param userEmail
      * @return
      */
+    @Override
     public String getUserName(String userEmail) {
         if(users.containsKey(userEmail)){
             return users.get(userEmail);
@@ -205,6 +206,7 @@ public class FirebaseAdapter {
      * @param userEmail
      * @param friendEmail
      */
+    @Override
     public void addFriend(String userEmail, String friendEmail){
         // add "friend" to friendList of "user"
         HashMap<String, String> friend = new HashMap<>();
@@ -218,6 +220,8 @@ public class FirebaseAdapter {
 
         Log.d(TAG,"Added friends " + friendEmail + " to " + userEmail);
     }
+
+    @Override
     public void addPendingFriend(String userEmail, String friendEmail){
         // add "friend" to pendingFriendList of "user"
         HashMap<String, String> friend = new HashMap<>();
@@ -230,6 +234,7 @@ public class FirebaseAdapter {
                 .set(friend);
         Log.d(TAG,"Added pending friends " + friendEmail + " to " + userEmail);
     }
+    @Override
     public void addPendingRequest(String userEmail, String friendEmail){
         // add "friend" to requestList of "user"
         HashMap<String, String> friend = new HashMap<>();
@@ -243,6 +248,7 @@ public class FirebaseAdapter {
 
         Log.d(TAG,"Added friend request " + friendEmail + " to " + userEmail);
     }
+    @Override
     public void removeFriend(String userEmail, String friendEmail){
         // remove "friend" from friendList of "user"
         friends.remove(friendEmail);
@@ -254,6 +260,7 @@ public class FirebaseAdapter {
 
         Log.d(TAG,"Removed friend " + friendEmail + " from " + userEmail);
     }
+    @Override
     public void removePendingFriend(String userEmail, String friendEmail){
         // remove "friend" from pendingFriendList of "user"
         pendingFriends.remove(friendEmail);
@@ -264,6 +271,7 @@ public class FirebaseAdapter {
                 .delete();
         Log.d(TAG,"Removed pending friend " + friendEmail + " from " + userEmail);
     }
+    @Override
     public void removePendingRequest(String userEmail, String friendEmail){
         // remove "friend" from requestList of "user"
         pendingRequests.remove(friendEmail);
@@ -278,12 +286,15 @@ public class FirebaseAdapter {
     /**
      * Getters for friend lists
      */
+    @Override
     public ArrayList<String> getPendingRequests() {
         return pendingRequests;
     }
+    @Override
     public ArrayList<String> getPendingFriends() {
         return pendingFriends;
     }
+    @Override
     public ArrayList<String> getFriends() {
         return friends;
     }
@@ -293,6 +304,7 @@ public class FirebaseAdapter {
      * @param friendEmail the email of the friend
      * @return
      */
+    @Override
     public boolean areFriends(String friendEmail) {
         // Checks if friend is user
         if(!users.containsKey(friendEmail)){
@@ -318,6 +330,7 @@ public class FirebaseAdapter {
      * @return the chats between user1 and user2: the first element is the chat stored under
      *         user1 and the second element is the chat stored under user2
      */
+    @Override
     public CollectionReference[] getChats(String userID1, String userID2){
         CollectionReference[] chats = new CollectionReference[2];
         chats[0] = db.collection(USER_COLLECTION)

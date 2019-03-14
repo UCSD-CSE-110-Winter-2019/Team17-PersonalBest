@@ -102,8 +102,8 @@ public class GoogleFitAdapter implements FitnessService {
                         // update the step count in User class, which will notify
                         // all Observers classes
                         user.updateDailySteps(total, Calendar.getInstance());
-                        Log.d(TAG, "Total steps: " + total);
-                        user.getStepHistory().printHist();
+                        //Log.d(TAG, "Total steps: " + total);
+                        //user.getStepHistory().printHist();
                     }
                 })
             .addOnFailureListener(
@@ -116,14 +116,10 @@ public class GoogleFitAdapter implements FitnessService {
     }
 
     @Override
-    public void addSteps(int steps) {
-
-    }
+    public void addSteps(int steps) { }
 
     @Override
-    public void addTime(int millis) {
-
-    }
+    public void addTime(int millis) { }
 
     @Override
     public Calendar getTime() {

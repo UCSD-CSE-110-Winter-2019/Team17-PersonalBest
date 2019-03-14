@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
         edit.putString("friends", friends);
         edit.putString("pendingFriends", pendingFriends);
         edit.putString("pendingRequests", pendingRequests);
-        user.getStepHistory().printHist();
+        //user.getStepHistory().printHist();
 
         edit.apply();
     }

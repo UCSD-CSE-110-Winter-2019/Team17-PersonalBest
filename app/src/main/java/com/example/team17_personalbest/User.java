@@ -72,7 +72,11 @@ public class User extends Observable implements StepSubject, TimeSubject {
         this.stepObservers = new ArrayList<StepObserver>();
         addStepObserver(this.stepHistory);
         this.timeObservers = new ArrayList<TimeObserver>();
+    }
 
+    /** Constructor for test */
+    public User(String email) {
+        this.setUserEmail(email);
     }
 
 

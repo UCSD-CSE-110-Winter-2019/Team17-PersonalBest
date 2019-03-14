@@ -20,11 +20,6 @@ public class FriendManager {
     public FriendManager(User user, FirebaseAdapter cloud){
         this.user = user;
         this.cloud = cloud;
-        // update user and friend lists
-        cloud.getUsersFromDB();
-        cloud.getFriendsFromDB(user.getUserEmail());
-        cloud.getPendingFriendsFromDB(user.getUserEmail());
-        cloud.getPendingRequestsFromDB(user.getUserEmail());
     }
 
     /**
@@ -63,7 +58,6 @@ public class FriendManager {
     public void acceptFriendRequest(String friend){
         cloud.removePendingRequest(this.user.getUserEmail(), friend);
         cloud.addFriend(this.user.getUserEmail(), friend);
-
         cloud.removePendingFriend(friend, this.user.getUserEmail());
         cloud.addFriend(friend, this.user.getUserEmail());
     }
