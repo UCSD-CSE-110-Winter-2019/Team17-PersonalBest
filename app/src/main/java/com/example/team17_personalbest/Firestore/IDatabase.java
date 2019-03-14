@@ -1,5 +1,6 @@
 package com.example.team17_personalbest.Firestore;
 
+import com.example.team17_personalbest.Step.StepHistory;
 import com.google.firebase.firestore.CollectionReference;
 
 import java.util.ArrayList;
@@ -17,5 +18,7 @@ public interface IDatabase {
     ArrayList<String> getPendingFriends();
     ArrayList<String> getFriends();
     boolean areFriends(String friendEmail);
+    void saveStepHistory(String userEmail, String stepHistory);
+    void getStepHistory(String userName, StepHistory stepHistory);
     CollectionReference[] getChats(String userID1, String userID2);
 }
