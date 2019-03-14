@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.Step.Day;
+import com.example.team17_personalbest.Step.HomeDisplayManager;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.ProgressService;
 import com.example.team17_personalbest.Step.ShowHistoryActivity;
