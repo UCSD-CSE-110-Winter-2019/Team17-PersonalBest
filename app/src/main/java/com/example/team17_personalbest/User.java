@@ -1,5 +1,6 @@
 package com.example.team17_personalbest;
 
+import com.example.team17_personalbest.Notifications;
 import com.example.team17_personalbest.Step.Day;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.StepHistory;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Observable;
+import java.util.Random;
 
 public class User extends Observable implements StepSubject, TimeSubject {
 
@@ -110,6 +112,7 @@ public class User extends Observable implements StepSubject, TimeSubject {
      */
     public boolean reachedGoal(){
         return totalDailySteps >= goal;
+		sendNotification();
     }
 
 
@@ -183,6 +186,14 @@ public class User extends Observable implements StepSubject, TimeSubject {
     public void setHasBeenEncouragedToday(boolean hasBeenEncouragedToday) {
         this.hasBeenEncouragedToday = hasBeenEncouragedToday;
     }
+	
+	public void sendNotification() {
+		NotificationsManager manager;
+		manager.set_channel_ID("FRIEND_MESSAGE");
+		manager.set_channel_name("Messages");
+		Notification.Builder builder = manager.addNotification("Goal Reached", "Congrats! You reached your step goal!");
+		manager.getManager().notify(new Random().nextInt(), builder.build());
+	}
 
 
     @Override

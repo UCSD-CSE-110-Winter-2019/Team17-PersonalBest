@@ -1,5 +1,6 @@
 package com.example.team17_personalbest.Chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.R;
+import com.example.team17_personalbest.Notifications;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class ChatActivity extends AppCompatActivity {
     String TAG = ChatActivity.class.getSimpleName();
@@ -66,7 +69,17 @@ public class ChatActivity extends AppCompatActivity {
                 }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
         });
+		sendNotification(messageView.getText())
     }
+	
+	private void sendNotification(String text) {
+		NotificationsManager manager;
+		manager.set_channel_ID("FRIEND_MESSAGE");
+		manager.set_channel_name("Messages");
+		Intent intent = new Intent(this, ChatActivity.class);
+		Notification.Builder builder = manager.addNotification("Friend Message", text, pendingIntent);
+		manager.getManager().notify(new Random().nextInt(), builder.build());
+	}
 
     private void initMessageUpdateListener() {
         chat.orderBy(TIMESTAMP_KEY, Query.Direction.ASCENDING)
