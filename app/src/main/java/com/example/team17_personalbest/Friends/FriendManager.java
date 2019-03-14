@@ -79,5 +79,10 @@ public class FriendManager {
         cloud.getFriendsFromDB(user.getUserEmail());
         cloud.getPendingFriendsFromDB(user.getUserEmail());
         cloud.getPendingRequestsFromDB(user.getUserEmail());
+        if(cloud.getFriends().size() > 0) {
+            this.user.setHasFriends(true);
+        } else {
+            this.user.setHasFriends(false);
+        }
     }
 }
