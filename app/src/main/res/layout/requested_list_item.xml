@@ -4,11 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:orientation="horizontal"
-    android:id="@+id/pending_list_item">
+    android:id="@+id/requested_list_item">
 
     <Button
-        android:id="@+id/pending_hist_button"
-        android:layout_width="277dp"
+        android:id="@+id/requested_hist_button"
+        android:layout_width="230dp"
         android:layout_height="match_parent"
         android:backgroundTint="@color/colorButton"
         android:gravity="left|center_vertical"
@@ -18,8 +18,16 @@
         android:textSize="18sp" />
 
     <ImageButton
-        android:id="@+id/pending_decline_button"
-        android:layout_width="72dp"
+        android:id="@+id/requested_accept_button"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:backgroundTint="@color/colorButton"
+        app:srcCompat="@drawable/baseline_done_black_18dp" />
+
+    <ImageButton
+        android:id="@+id/requested_decline_button"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:backgroundTint="@color/colorButton"
         app:srcCompat="@drawable/baseline_clear_black_18dp" />

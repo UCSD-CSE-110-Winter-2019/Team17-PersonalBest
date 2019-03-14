@@ -1,13 +1,16 @@
 package com.example.team17_personalbest.Friends;
 
+import android.util.Log;
+
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.User;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class FriendManager {
 
     private User user;
     private FirebaseAdapter cloud;
-
 
     /**
      * Constructor
@@ -17,7 +20,9 @@ public class FriendManager {
     public FriendManager(User user, FirebaseAdapter cloud){
         this.user = user;
         this.cloud = cloud;
+        // update user and friend lists
         cloud.getUsersFromDB();
+        cloud.getFriendsFromDB(user.getUserEmail());
         cloud.getPendingFriendsFromDB(user.getUserEmail());
         cloud.getPendingRequestsFromDB(user.getUserEmail());
     }
@@ -27,12 +32,10 @@ public class FriendManager {
      * @param friendEmail friend's email address
      */
     public void addFriend(String friendEmail){
-        // If email address doesn't exist, display
-        /*if(!cloud.userExists(friend)) {
-            // TODO: log error;
+        if(friendEmail.equals(user.getUserEmail())){
+            Log.d(TAG, "Can't add yourself as a friend");
             return;
-        }*/
-
+        }
         // add this email address to current user's pending friend list
         cloud.addPendingFriend(this.user.getUserEmail(), friendEmail);
         // add this request to the target friend's request list
@@ -44,8 +47,13 @@ public class FriendManager {
      * @param friend friend's email address
      */
     public void removeFriend(String friend){
-        cloud.removeFriend(this.user.getUserName(), friend);
-        cloud.removeFriend(friend, this.user.getUserName());
+        cloud.removeFriend(this.user.getUserEmail(), friend);
+        cloud.removeFriend(friend, this.user.getUserEmail());
+    }
+
+    public void removePendingFriend(String friend){
+        cloud.removePendingFriend(this.user.getUserEmail(), friend);
+        cloud.removePendingRequest(friend, this.user.getUserEmail());
     }
 
     /**
@@ -65,8 +73,17 @@ public class FriendManager {
      * @param friend friend's email address
      */
     public void denyFriendRequest(String friend){
-        cloud.removePendingFriend(friend, this.user.getUserName());
-        cloud.removePendingRequest(this.user.getUserName(), friend);
+        cloud.removePendingFriend(friend, this.user.getUserEmail());
+        cloud.removePendingRequest(this.user.getUserEmail(), friend);
     }
 
+    /**
+     * updates the friend lists from the cloud
+     */
+    public void updateFriends(){
+        cloud.getUsersFromDB();
+        cloud.getFriendsFromDB(user.getUserEmail());
+        cloud.getPendingFriendsFromDB(user.getUserEmail());
+        cloud.getPendingRequestsFromDB(user.getUserEmail());
+    }
 }
