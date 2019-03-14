@@ -1,9 +1,12 @@
-package com.example.team17_personalbest;
+package com.example.team17_personalbest.Step;
 
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.team17_personalbest.MainActivity;
+import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.PlannedWalk;
+import com.example.team17_personalbest.User;
 
 import java.text.DecimalFormat;
 import java.util.Locale;

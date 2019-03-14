@@ -35,6 +35,7 @@ public class User extends Observable implements StepSubject, TimeSubject {
     private HashMap<String, String> friends;
     private HashMap<String, String>  pendingFriends;
     private HashMap<String, String>  pendingRequests;
+    private boolean hasFriends;
 
     // observers
     private ArrayList<StepObserver> stepObservers;
@@ -59,6 +60,7 @@ public class User extends Observable implements StepSubject, TimeSubject {
         addStepObserver(this.stepHistory);
         this.timeObservers = new ArrayList<TimeObserver>();
         addTimeObserver(new UserNewDayManager());
+        this.hasFriends = false;
     }
 
     /** Copy constructor */
@@ -169,10 +171,13 @@ public class User extends Observable implements StepSubject, TimeSubject {
     public HashMap<String, String>  getFriends(){ return this.friends; }
     public HashMap<String, String>  getPendingFriends(){ return this.pendingFriends; }
     public HashMap<String, String>  getPendingRequests(){ return this.pendingRequests; }
+    public boolean getHasFriends(){ return this.hasFriends; }
     public void setFriends(HashMap<String, String>  friends){ this.friends = friends; }
     public void setPendingFriends(HashMap<String, String>  pendingFriends){ this.pendingFriends = pendingFriends; }
     public void setPendingRequests(HashMap<String, String>  pendingRequests){ this.pendingRequests = pendingRequests; }
-
+    public void setHasFriends(boolean hasFriend) {
+        this.hasFriends = hasFriend;
+    }
 
     public boolean isHasBeenCongratulatedToday() {
         return hasBeenCongratulatedToday;
@@ -194,7 +199,6 @@ public class User extends Observable implements StepSubject, TimeSubject {
 		Notification.Builder builder = manager.addNotification("Goal Reached", "Congrats! You reached your step goal!");
 		manager.getManager().notify(new Random().nextInt(), builder.build());
 	}
-
 
     @Override
     public void addStepObserver(StepObserver observer) {

@@ -31,14 +31,13 @@ public class ProgressService implements Observer {
         // Progress = (today's step - yesterday's step) / 500
         final int newProgress = (stepsOfToday - stepsOfYesterday) / 500;
         // Whenever reaching a new progress, show Toast message
-        if( newProgress >= 1 && !user.isHasBeenEncouragedToday() ) {
+        if( newProgress >= 1 && !user.isHasBeenEncouragedToday() && !user.getHasFriends() ) {
             user.setHasBeenEncouragedToday(true);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     String encouragement = String.format(Locale.US, "You've increased your daily steps by over %d steps. Keep up the good work!", newProgress * 500);
                     Toast.makeText(activity.getApplicationContext(), encouragement, Toast.LENGTH_LONG).show();
-
                 }
             });
         }
