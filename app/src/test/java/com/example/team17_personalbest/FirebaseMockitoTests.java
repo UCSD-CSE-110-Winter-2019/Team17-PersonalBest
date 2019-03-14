@@ -7,6 +7,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -61,7 +62,7 @@ public class FirebaseMockitoTests {
     DocumentReference friend_RequestedFriendDocument;
 
     @Mock
-    Task<DocumentSnapshot> task;
+    Task<QuerySnapshot> task;
     @Mock
     DocumentSnapshot userSnapshot;
 
@@ -216,6 +217,26 @@ public class FirebaseMockitoTests {
         // Verify right method is called
         Mockito.verify(user_RequestedFriendDocument, Mockito.times(1)).delete();
         Mockito.verify(friend_PendingFriendDocument, Mockito.times(1)).delete();
+    }
+
+    @Test
+    public void test_getFriends(){
+        // User collection and document methods
+        Mockito.when(userCollection.document(USER_TEST_EMAIL)).thenReturn(userDocument);
+        Mockito.when(userDocument.collection("friends")).thenReturn(user_Friends);
+        Mockito.when(userDocument.collection("pending")).thenReturn(user_PendingFriends);
+        Mockito.when(userDocument.collection("requests")).thenReturn(user_RequestedFriends);
+        Mockito.when(user_Friends.get()).thenReturn(task);
+        Mockito.when(user_PendingFriends.get()).thenReturn(task);
+        Mockito.when(user_RequestedFriends.get()).thenReturn(task);
+
+        firebaseAdapter.getFriendsFromDB(user.getUserEmail());
+        firebaseAdapter.getPendingFriendsFromDB(user.getUserEmail());
+        firebaseAdapter.getPendingRequestsFromDB(user.getUserEmail());
+
+        Mockito.verify(user_Friends, Mockito.times(1)).get();
+        Mockito.verify(user_PendingFriends, Mockito.times(1)).get();
+        Mockito.verify(user_RequestedFriends, Mockito.times(1)).get();
     }
 
 }
