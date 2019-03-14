@@ -90,7 +90,6 @@ public class User extends Observable implements StepSubject, TimeSubject {
         notifyStepObservers(steps, calendar);
     }
 
-
     /**
      * Description: Simulates walking enough to reach totalDailySteps
      * Inputs: totalDailySteps - the number of steps the user walked today
@@ -101,8 +100,6 @@ public class User extends Observable implements StepSubject, TimeSubject {
         int steps = (int) totalDailySteps - this.totalDailySteps;
         walk(steps, calendar);
     }
-
-
 
     /**
      * Description: Returns true if user reached goal
