@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
         account = GoogleSignIn.getLastSignedInAccount(this);
         if(account == null){
             signIn();
+        }else{
+            Log.w(TAG, "Signed in with: " + account.getEmail());
+            Log.w(TAG, "User Name: " + account.getDisplayName());
         }
 
         // navigation bar controller
