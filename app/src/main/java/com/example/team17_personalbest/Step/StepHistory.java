@@ -54,8 +54,6 @@ public class StepHistory implements StepObserver {
         }
     }
 
-
-
     public void printHist(){
         for(int i = 0; i < hist.size(); i++){
             System.out.println(hist.get(i).getDayString() + ", " + hist.get(i).getPlannedSteps() + ", " + hist.get(i).getNormalSteps());
@@ -67,6 +65,18 @@ public class StepHistory implements StepObserver {
             return -1;
         Day yesterday = hist.get(hist.size()-2);
         return yesterday.getNormalSteps() + yesterday.getPlannedSteps();
+    }
+
+    /**
+     * Setter and getter
+     * @param
+     */
+    public void setHist(StepHistory stepHistory){
+        if(stepHistory != null)
+            this.hist = stepHistory.getHistory();
+    }
+    public ArrayList<Day> getHistory(){
+        return hist;
     }
 
     public Day getCurrentDay(){

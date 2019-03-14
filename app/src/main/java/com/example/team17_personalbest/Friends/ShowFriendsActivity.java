@@ -92,6 +92,8 @@ public class ShowFriendsActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Gson gson = new Gson();
+                        cloud.saveStepHistory(user.getUserEmail(), gson.toJson(user.getStepHistory()));
                         friendManager.updateFriends();
                         updateFriendsOnUI();
                         saveUser();
@@ -173,6 +175,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ShowFriendsActivity.this,ShowFriendHistActivity.class);
+                intent.putExtra("email", friendEmail);
                 startActivity(intent);
             }
         });
