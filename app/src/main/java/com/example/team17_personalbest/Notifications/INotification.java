@@ -1,4 +1,4 @@
-package com.example.team17_personalbest.Notifications
+package com.example.team17_personalbest.Notifications;
 
 import com.google.android.gms.tasks.Task;
 

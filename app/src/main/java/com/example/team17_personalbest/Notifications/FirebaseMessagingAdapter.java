@@ -1,6 +1,5 @@
 package com.example.team17_personalbest.Notifications;
 
-package edu.ucsd.cse110.firebaselab.notification;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
