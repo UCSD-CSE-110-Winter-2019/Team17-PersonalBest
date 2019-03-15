@@ -32,6 +32,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.StackedValueFormatter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
@@ -48,20 +49,24 @@ public class ShowFriendHistActivity extends AppCompatActivity {
     String friendEmail;
     String friendName;
     String userEmail;
+    FirebaseAdapter cloud;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_friend_hist);
 
-        FirebaseAdapter cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
-        cloud.getUsersFromDB();
         friendEmail = getIntent().getStringExtra("friend_email");
         friendName = getIntent().getStringExtra("friend_name");
         userEmail = getIntent().getStringExtra("user_email");
 
         TextView name = findViewById(R.id.name);
         name.setText(friendName);
+
+        if(cloud != null)
+            return;
+        cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
+        cloud.getUsersFromDB();
 
         Task<DocumentSnapshot> task = cloud.getStepHistory(friendEmail);
         task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -185,6 +190,22 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         finish();
         Intent intent = new Intent(this, ShowFriendsActivity.class);
         startActivity(intent);
+    }
+
+    public String getFriendName(){
+        return friendName;
+    }
+
+    public String getFriendEmail(){
+        return friendEmail;
+    }
+
+    public String getUserEmail(){
+        return userEmail;
+    }
+
+    public void setFirebaseAdapter(FirebaseAdapter firebaseAdapter){
+        cloud = firebaseAdapter;
     }
 
 
