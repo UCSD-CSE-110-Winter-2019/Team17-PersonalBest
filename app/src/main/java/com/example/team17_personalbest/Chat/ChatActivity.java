@@ -55,7 +55,7 @@ public class ChatActivity extends AppCompatActivity {
 
         setupChat();
         setupMessaging();
-        subscribeToNotificationsTopic();
+        //subscribeToNotificationsTopic();
         setupNavigation();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
