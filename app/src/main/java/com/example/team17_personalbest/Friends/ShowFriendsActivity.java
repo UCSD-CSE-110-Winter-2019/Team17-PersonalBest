@@ -56,6 +56,13 @@ public class ShowFriendsActivity extends AppCompatActivity {
         cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
         friendManager = new FriendManager(user, cloud);
 
+        // Update freinds
+        Gson gson = new Gson();
+        cloud.saveStepHistory(user.getUserEmail(), gson.toJson(user.getStepHistory()));
+        friendManager.updateFriends();
+        updateFriendsOnUI();
+        saveUser();
+
         final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
                 // Switching between home screen and history
@@ -85,8 +92,22 @@ public class ShowFriendsActivity extends AppCompatActivity {
             }
         });
 
-        // update friends every second
+        // update friends and step history every 10 second
         Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        friendManager.updateFriends();
+                        updateFriendsOnUI();
+                        saveUser();
+                    }
+                });
+            }
+        }, 0, 1000);
+
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -95,13 +116,10 @@ public class ShowFriendsActivity extends AppCompatActivity {
                     public void run() {
                         Gson gson = new Gson();
                         cloud.saveStepHistory(user.getUserEmail(), gson.toJson(user.getStepHistory()));
-                        friendManager.updateFriends();
-                        updateFriendsOnUI();
-                        saveUser();
                     }
                 });
             }
-        }, 0, 1000);
+        }, 0, 100000);
 
     }
 
