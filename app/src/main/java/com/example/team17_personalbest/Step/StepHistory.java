@@ -56,7 +56,11 @@ public class StepHistory implements StepObserver {
 
     public void printHist(){
         for(int i = 0; i < hist.size(); i++){
-            System.out.println(hist.get(i).getDayString() + ", " + hist.get(i).getPlannedSteps() + ", " + hist.get(i).getNormalSteps());
+            System.out.println(hist.get(i).getDayString() + ", "
+                    + hist.get(i).getPlannedSteps() + ", " + hist.get(i).getNormalSteps());
+        }
+        if(hist.size() == 0) {
+            System.out.println("History is empty");
         }
     }
 
@@ -69,12 +73,16 @@ public class StepHistory implements StepObserver {
 
     /**
      * Setter and getter
-     * @param
+     * @param stepHistory an stepHistory object to copy
      */
-    public void setHist(StepHistory stepHistory){
-        if(stepHistory != null)
-            this.hist = stepHistory.getHistory();
+    public void setHist(ArrayList<Day> stepHistory){
+        //if(stepHistory != null) {
+            for(Day day: (ArrayList<Day>) stepHistory){
+                this.hist.add(day);
+            }
+        //}
     }
+
     public ArrayList<Day> getHistory(){
         return hist;
     }

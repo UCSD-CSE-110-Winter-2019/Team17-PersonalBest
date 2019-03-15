@@ -117,7 +117,6 @@ public class ShowFriendsActivity extends AppCompatActivity {
                 friends) {
             if(!friendsOnUi.containsKey(friend)) {
                 addFriendToList(friend);
-                System.out.println("ADSFFSAFSA");
             }
         }
         Set friendsKey = friendsOnUi.keySet();
@@ -175,6 +174,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
         hist_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                finish();
                 Intent intent = new Intent(ShowFriendsActivity.this,ShowFriendHistActivity.class);
                 intent.putExtra("friend_email", friendEmail);
                 intent.putExtra("friend_name", cloud.getUserName(friendEmail)); 

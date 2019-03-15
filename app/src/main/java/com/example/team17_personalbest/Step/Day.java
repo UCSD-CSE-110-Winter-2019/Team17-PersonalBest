@@ -52,8 +52,6 @@ public class Day {
         return currDay;
     }
 
-
-
     public int getNormalSteps() {
         return normalSteps;
     }

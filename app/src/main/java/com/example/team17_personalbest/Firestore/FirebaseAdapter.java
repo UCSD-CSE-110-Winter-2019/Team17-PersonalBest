@@ -3,6 +3,7 @@ package com.example.team17_personalbest.Firestore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.team17_personalbest.Step.Day;
 import com.example.team17_personalbest.Step.StepHistory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -59,6 +60,7 @@ public class FirebaseAdapter implements IDatabase {
         friends = new ArrayList<>();
         pendingRequests = new ArrayList<>();
         pendingFriends = new ArrayList<>();
+        this.getUsersFromDB();
     }
 
     /**
@@ -126,7 +128,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!users.containsKey((String) change.getId())) {
                                 users.put((String) change.getId(), (String) change.get(USER_NAME));
-                                Log.d(TAG, "User " + change.getId() + " added!");
+                                //Log.d(TAG, "User " + change.getId() + " added!");
                             }
                         });
                     }
@@ -150,7 +152,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!friends.contains((String) change.getId())) {
                                 friends.add((String) change.getId());
-                                Log.d(TAG, "Friend " + change.getId() + " added!");
+                                //Log.d(TAG, "Friend " + change.getId() + " added!");
                             }
                         });
                     }
@@ -174,7 +176,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!pendingFriends.contains((String) change.getId())) {
                                 pendingFriends.add((String) change.getId());
-                                Log.d(TAG, "Pending friend " + change.getId() + " added!");
+                                //Log.d(TAG, "Pending friend " + change.getId() + " added!");
                             }
                         });
                     }
@@ -198,7 +200,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!pendingRequests.contains((String) change.getId())) {
                                 pendingRequests.add((String) change.getId());
-                                Log.d(TAG, "Friend request " + change.getId() + " added!");
+                                //Log.d(TAG, "Friend request " + change.getId() + " added!");
                             }
                         });
                     }
@@ -341,7 +343,7 @@ public class FirebaseAdapter implements IDatabase {
                                 db.collection(USER_COLLECTION)
                                         .document(userEmail)
                                         .update(USER_STEPHIST, stepHistory);
-                                Log.d(TAG, "Updated " + userEmail + " step history");
+                                //Log.d(TAG, "Updated " + userEmail + " step history");
                             }else{
                                 Log.d(TAG, "User does not exist");
                             }
@@ -354,47 +356,33 @@ public class FirebaseAdapter implements IDatabase {
     }
 
     @Override
-    public void getStepHistory(String userEmail, StepHistory stepHistory) {
-        db.collection(USER_COLLECTION)
+    public Task<DocumentSnapshot> getStepHistory(String userEmail) {
+        return db.collection(USER_COLLECTION)
                 .document(userEmail)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            DocumentSnapshot documentSnapshot = task.getResult();
-                            Gson gson = new Gson();
-                            stepHistory.setHist(gson.fromJson((String)documentSnapshot.get(USER_STEPHIST), StepHistory.class));
-                            Log.d(TAG, userEmail + " step history gotten");
-                        }else{
-                            Log.e(TAG, "Failed with: ", task.getException());
-                        }
-                    }
-                });
+                .get();
     }
 
     /**
      * Gets the collection of chat messages between userID1 and userID2
-     * @param userID1
-     * @param userID2
+     * @param userEmail1
+     * @param userEmail2
      * @return the chats between user1 and user2: the first element is the chat stored under
      *         user1 and the second element is the chat stored under user2
      */
     @Override
-    public CollectionReference[] getChats(String userID1, String userID2){
+    public CollectionReference[] getChats(String userEmail1, String userEmail2){
         CollectionReference[] chats = new CollectionReference[2];
         chats[0] = db.collection(USER_COLLECTION)
-                .document(userID1)
+                .document(userEmail1)
                 .collection(CHAT_COLLECTION)
-                .document(userID2)
+                .document(userEmail2)
                 .collection(MESSAGES_COLLECTION);
         chats[1] = db.collection(USER_COLLECTION)
-                .document(userID2)
+                .document(userEmail2)
                 .collection(CHAT_COLLECTION)
-                .document(userID1)
+                .document(userEmail1)
                 .collection(MESSAGES_COLLECTION);
         return chats;
-
     }
 
     /**
@@ -404,7 +392,6 @@ public class FirebaseAdapter implements IDatabase {
      * @param text the message
      */
     public Task<DocumentReference> sendMessage(String user1Email, String user2Email, String text){
-        //TODO: Add cloud function for timestamps (not here in java code)
         HashMap<String, String> message = new HashMap<>();
         message.put(FROM_KEY, getUserName(user1Email));
         message.put(TEXT_KEY, text);

@@ -6,12 +6,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.R;
@@ -28,14 +30,24 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.StackedValueFormatter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShowFriendHistActivity extends AppCompatActivity {
 
+    String TAG = ShowFriendHistActivity.class.getSimpleName();
+
     BarChart barChart;
+    StepHistory friendHistory;
+    String friendEmail;
+    String friendName;
+    String userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,37 +55,54 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_friend_hist);
 
         FirebaseAdapter cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
-        String friendEmail = getIntent().getStringExtra("friend_email");
-        String friendName = getIntent().getStringExtra("friend_name");
-        String userEmail = getIntent().getStringExtra("user_name");
+        friendEmail = getIntent().getStringExtra("friend_email");
+        friendName = getIntent().getStringExtra("friend_name");
+        userEmail = getIntent().getStringExtra("user_email");
 
         TextView name = findViewById(R.id.name);
         name.setText(friendName);
 
-        StepHistory friendHistory = new StepHistory();
-        cloud.getStepHistory(friendEmail, friendHistory);
-        barChart = findViewById(R.id.bar_chart);
-        showHistory(friendHistory.getHist(), barChart);
+        Task<DocumentSnapshot> task = cloud.getStepHistory(friendEmail);
+        task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            Gson gson = new Gson();
+                            friendHistory = gson.fromJson((String)documentSnapshot.get("u_stephist"), StepHistory.class);
+                            barChart = findViewById(R.id.bar_chart);
+                            showHistory(friendHistory.getHist(), barChart);
+                            barChart.invalidate();
+
+                        } else{
+                            Log.e("ShowFriendHistActivity:", "Failed with: ", task.getException());
+                        }
+                    }
+                });
 
         // Back to friend list
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                launchFriend();
             }
         });
 
         EditText message = findViewById(R.id.message);
-        String content = message.getText().toString();
         Button sendMessageButton = findViewById(R.id.send_button);
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cloud.sendMessage(userEmail,friendEmail, content);
+                String content = message.getText().toString();
+                cloud.sendMessage(userEmail, friendEmail, content).addOnSuccessListener(result -> {
+                    Toast.makeText(ShowFriendHistActivity.this, "Message sent", Toast.LENGTH_SHORT).show();
+                    message.setText("");
+                }).addOnFailureListener(error -> {
+                    Log.e(TAG, error.getLocalizedMessage());
+                });;
             }
         });
-
 
         final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
@@ -86,13 +115,16 @@ public class ShowFriendHistActivity extends AppCompatActivity {
                                 finish();
                                 return true;
                             case R.id.navigation_history:
-                                launchHistory();
+                                //launchHistory();
+                                return true;
+                            case R.id.navigation_friends:
+                                launchFriend();
                                 return true;
                         }
                         return false;
                     }
                 });
-        navigation.setSelectedItemId(R.id.navigation_friends);
+        navigation.setSelectedItemId(R.id.navigation_history);
     }
 
     public void showHistory(List<Day> hist, BarChart barChart){
@@ -144,4 +176,15 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ShowHistoryActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Displays step history
+     */
+    private void launchFriend() {
+        finish();
+        Intent intent = new Intent(this, ShowFriendsActivity.class);
+        startActivity(intent);
+    }
+
+
 }
