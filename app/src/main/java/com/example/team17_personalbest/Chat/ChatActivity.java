@@ -18,17 +18,20 @@ import com.example.team17_personalbest.Notifications;
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.ShowHistoryActivity;
+import com.example.team17_personalbest.R;
+import com.example.team17_personalbest.Notifications;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class ChatActivity extends AppCompatActivity {
-	public static final String NOTIFICATION_SERVICE_EXTRA = "NOTIFICATION_SERVICE";
     String TAG = ChatActivity.class.getSimpleName();
 
     String COLLECTION_KEY = "chats";
@@ -73,7 +76,17 @@ public class ChatActivity extends AppCompatActivity {
                 }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
         });
+		sendNotification(messageView.getText())
     }
+	
+	private void sendNotification(String text) {
+		NotificationsManager manager;
+		manager.set_channel_ID("FRIEND_MESSAGE");
+		manager.set_channel_name("Messages");
+		Intent intent = new Intent(this, ChatActivity.class);
+		Notification.Builder builder = manager.addNotification("Friend Message", text, pendingIntent);
+		manager.getManager().notify(new Random().nextInt(), builder.build());
+	}
 
     private void initMessageUpdateListener() {
         chat.orderBy(TIMESTAMP_KEY, Query.Direction.ASCENDING)
@@ -104,9 +117,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void subscribeToNotificationsTopic() {
         //TODO: Add firebase notifications cloud function (not in java code)
-		String key = getIntent().getStringExtra(NOTIFICATION_SERVICE_EXTRA);
-		INotification in = NotificationFactory.getInstance().getOrDefault(key, FirebaseMessagingAdapter::getInstance)
-        in.subscribeToNotificationsTopic(DOCUMENT_KEY)
+        firebaseMessaging.subscribeToTopic(DOCUMENT_KEY)
                 .addOnCompleteListener(task -> {
                             String msg = "Subscribed to notifications";
                             if (!task.isSuccessful()) {
