@@ -14,26 +14,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import com.example.team17_personalbest.Notifications;
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.ShowHistoryActivity;
-import com.example.team17_personalbest.R;
-=======
-import com.example.team17_personalbest.R;
->>>>>>> parent of 4584a60... Added some notifications stuff
-=======
-import com.example.team17_personalbest.R;
->>>>>>> parent of 4584a60... Added some notifications stuff
-import com.example.team17_personalbest.Notifications;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +42,6 @@ public class ChatActivity extends AppCompatActivity {
     public String from;
     public String to;
     public boolean test = false;
-    public MyFirebaseMessaging firebaseMessaging;
     public FirebaseAdapter firebase;
     public ScrollView scrollView;
 
@@ -69,7 +57,7 @@ public class ChatActivity extends AppCompatActivity {
 
         setupChat();
         setupMessaging();
-        //subscribeToNotificationsTopic();
+        subscribeToNotificationsTopic();
         setupNavigation();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
@@ -84,17 +72,8 @@ public class ChatActivity extends AppCompatActivity {
                 }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
         });
-		sendNotification(messageView.getText())
     }
 	
-	private void sendNotification(String text) {
-		NotificationsManager manager;
-		manager.set_channel_ID("FRIEND_MESSAGE");
-		manager.set_channel_name("Messages");
-		Intent intent = new Intent(this, ChatActivity.class);
-		Notification.Builder builder = manager.addNotification("Friend Message", text, pendingIntent);
-		manager.getManager().notify(new Random().nextInt(), builder.build());
-	}
 
     private void initMessageUpdateListener() {
         chat.orderBy(TIMESTAMP_KEY, Query.Direction.ASCENDING)
@@ -125,8 +104,10 @@ public class ChatActivity extends AppCompatActivity {
 
     private void subscribeToNotificationsTopic() {
         //TODO: Add firebase notifications cloud function (not in java code)
-        firebaseMessaging.subscribeToTopic(DOCUMENT_KEY)
-                .addOnCompleteListener(task -> {
+		NotificationFactory notificationFactory = NotificationFactory.getInstance();
+        String key = getIntent().getStringExtra(NOTIFICATION_SERVICE_EXTRA);
+        INotification inote = notificationFactory.getOrDefault(key, FirebaseMessagingAdapter::getInstance);
+        inote.subscribeToTopic(DOCUMENT_KEY, task -> {
                             String msg = "Subscribed to notifications";
                             if (!task.isSuccessful()) {
                                 msg = "Subscribe to notifications failed";
