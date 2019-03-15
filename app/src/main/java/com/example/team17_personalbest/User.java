@@ -1,6 +1,11 @@
 package com.example.team17_personalbest;
 
-import com.example.team17_personalbest.Notifications;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.Day;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.StepHistory;
@@ -193,11 +198,12 @@ public class User extends Observable implements StepSubject, TimeSubject {
     }
 	
 	public void sendNotification() {
-		NotificationsManager manager;
-		manager.set_channel_ID("FRIEND_MESSAGE");
-		manager.set_channel_name("Messages");
-		Notification.Builder builder = manager.addNotification("Goal Reached", "Congrats! You reached your step goal!");
-		manager.getManager().notify(new Random().nextInt(), builder.build());
+		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationChannel nc =  new NotificationChannel("com.example.team17_personalbest", "Goals", NotificationManager.IMPORTANCE_DEFAULT);
+		manager.createNotificationChannel(nc);
+		Notification.Builder builder = android.app.Notification.Builder(getApplicationContext(), "com.example.team17_personalbest")
+        .setContentTitle("Goal reached").setContentText("Congratulations! You reached your step goal.");
+		manager.notify(new Random().nextInt(), builder.build());
 	}
 
     @Override
