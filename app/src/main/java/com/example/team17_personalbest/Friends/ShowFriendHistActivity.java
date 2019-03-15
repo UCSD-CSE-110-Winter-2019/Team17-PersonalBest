@@ -55,6 +55,7 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         barChart = findViewById(R.id.bar_chart);
         showHistory(friendHistory.getHist(), barChart);
 
+        // Back to friend list
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
