@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.Step.Day;
+import com.example.team17_personalbest.Step.HomeDisplayManager;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.ProgressService;
 import com.example.team17_personalbest.Step.ShowHistoryActivity;
@@ -54,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "MainActivity";
     //private TextView mTextMessage;
-    private User user;
+    public User user;
     private FitnessService fitnessService;
+    public AlertDialog.Builder builder;
+    public AlertDialog dialog;
 
     private GoogleSignInAccount account;
     private GoogleSignInClient mGoogleSignInClient;
@@ -75,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
         account = GoogleSignIn.getLastSignedInAccount(this);
         if(account == null){
             signIn();
+        }else{
+            Log.w(TAG, "Signed in with: " + account.getEmail());
+            Log.w(TAG, "User Name: " + account.getDisplayName());
         }
 
         // navigation bar controller
@@ -284,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
         edit.putString("friends", friends);
         edit.putString("pendingFriends", pendingFriends);
         edit.putString("pendingRequests", pendingRequests);
-        user.getStepHistory().printHist();
+        //user.getStepHistory().printHist();
 
         edit.apply();
     }
@@ -361,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
      * Creates a popup that lets the user set a new goal
      */
     public void displayNewGoalPrompt() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder = new AlertDialog.Builder(this);
         builder.setTitle("Set Goal");
 
         // Set up user input
@@ -393,6 +398,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        dialog = builder.create();
         builder.show();
     }
 

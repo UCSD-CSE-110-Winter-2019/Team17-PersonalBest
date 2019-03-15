@@ -9,13 +9,16 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.example.team17_personalbest.Chat.ChatActivity;
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.Day;
@@ -26,6 +29,7 @@ import com.example.team17_personalbest.User;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Set;
@@ -33,10 +37,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ShowFriendsActivity extends AppCompatActivity {
+    private String TAG = "ShowFriendsActivity";
 
     User user;
     FirebaseAdapter cloud;
     FriendManager friendManager;
+
+    HashMap<String, LinearLayout> friendsOnUi = new HashMap<>();
+    HashMap<String, LinearLayout> pendingFriendsOnUi = new HashMap<>();
+    HashMap<String, LinearLayout> pendingRequestsOnUi = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +56,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
         cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
         friendManager = new FriendManager(user, cloud);
 
-        final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
                 // Switching between home screen and history
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -76,7 +85,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
             }
         });
 
-        // update normal and planned walk steps every second
+        // update friends every second
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -84,6 +93,10 @@ public class ShowFriendsActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Gson gson = new Gson();
+                        cloud.saveStepHistory(user.getUserEmail(), gson.toJson(user.getStepHistory()));
+                        friendManager.updateFriends();
+                        updateFriendsOnUI();
                         saveUser();
                     }
                 });
@@ -92,53 +105,80 @@ public class ShowFriendsActivity extends AppCompatActivity {
 
     }
 
-    private void displayFriendsList(HashMap<String, String> list){
-        Set keySet = list.keySet();
-        for (Object key :
-             keySet) {
-            addFriendToList((String) key);
+
+    /**
+     * updates the friends, pending friends, and requests on the UI to make sure they match the
+     * database
+     */
+    private void updateFriendsOnUI(){
+        // update friend list
+        ArrayList<String> friends = cloud.getFriends();
+        for (String friend:
+                friends) {
+            if(!friendsOnUi.containsKey(friend)) {
+                addFriendToList(friend);
+                System.out.println("ADSFFSAFSA");
+            }
+        }
+        Set friendsKey = friendsOnUi.keySet();
+        for(Object friend : friendsKey){
+            if(!friends.contains(friend)){
+                removeFriendFromList((String)friend);
+            }
+        }
+        // update pending friend list
+        ArrayList<String> pendingFriends = cloud.getPendingFriends();
+        for (String friend:
+                pendingFriends) {
+            if(!pendingFriendsOnUi.containsKey(friend)) {
+                addPendingFriendToList(friend);
+            }
+        }
+        Set pendingFriendsKey = pendingFriendsOnUi.keySet();
+        for(Object friend : pendingFriendsKey){
+            if(!pendingFriends.contains(friend)){
+                removePendingFriendFromList((String)friend);
+            }
+        }
+        // update friend requests
+        ArrayList<String> requestedFriends = cloud.getPendingRequests();
+        for (String friend:
+                requestedFriends) {
+            if(!pendingRequestsOnUi.containsKey(friend)) {
+                addRequestedFriendToList(friend);
+            }
+        }
+        Set requestedFriendsKey = pendingRequestsOnUi.keySet();
+        for(Object friend : requestedFriendsKey){
+            if(!requestedFriends.contains(friend)){
+                removePendingRequestFromList((String)friend);
+            }
         }
     }
 
-
-//    /**
-//     * This is for testing, should have User as parameter
-//     */
-//    private void addFriendToList(String name){
-//        LinearLayout friendList = findViewById(R.id.friend_list);
-//        LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.friend_list_item, friendList, false);
-//
-//        Button hist_button = item.findViewById(R.id.friend_hist_button);
-//        Button chat_button = item.findViewById(R.id.friend_chat_button);
-//        Button remove_button = item.findViewById(R.id.friend_remove_button);
-//        hist_button.setText(name);
-//        // show history
-//        hist_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(ShowFriendsActivity.this,ShowFriendHistActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-//        friendList.addView(item);
-//    }
-
     /**
      * Add an item (a friend) to the friend list
+     * @param friendEmail
      */
     private void addFriendToList(String friendEmail){
         LinearLayout friendList = findViewById(R.id.friend_list);
+        ViewGroup.LayoutParams friendListParams = friendList.getLayoutParams();
         LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.friend_list_item, friendList, false);
+        ViewGroup.LayoutParams itemParams = item.getLayoutParams();
 
         Button hist_button = item.findViewById(R.id.friend_hist_button);
         ImageButton chat_button = item.findViewById(R.id.friend_chat_button);
         ImageButton remove_button = item.findViewById(R.id.friend_remove_button);
         hist_button.setText(cloud.getUserName(friendEmail));
+
         // show history
         hist_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ShowFriendsActivity.this,ShowFriendHistActivity.class);
+                intent.putExtra("friend_email", friendEmail);
+                intent.putExtra("friend_name", cloud.getUserName(friendEmail)); 
+                intent.putExtra("user_email", user.getUserEmail());
                 startActivity(intent);
             }
         });
@@ -147,6 +187,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // go to chat
+                launchChat(friendEmail);
             }
         });
         // remove friend
@@ -154,11 +195,146 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 friendManager.removeFriend(friendEmail);
+                removeFriendFromList(friendEmail);
             }
         });
+
+        // add item to friends list
+        System.out.println("paramsa:" + friendListParams.height);
+        System.out.println("paramsa:" + itemParams.height);
+        friendListParams.height = friendListParams.height + itemParams.height;
+        System.out.println("paramsb:" + friendListParams.height);
         friendList.addView(item);
+        friendList.setLayoutParams(friendListParams);
+
+        // add item to friendsOnUi list
+        friendsOnUi.put(friendEmail, item);
+
+        Log.d(TAG,"Added " + friendEmail + " to friend UI list");
     }
 
+    /**
+     * remove a friend from the friend list
+     * @param friendEmail
+     */
+    private void removeFriendFromList(String friendEmail){
+        LinearLayout friendList = findViewById(R.id.friend_list);
+        ViewGroup.LayoutParams friendListParams = friendList.getLayoutParams();
+        LinearLayout item = friendsOnUi.get(friendEmail);
+        ViewGroup.LayoutParams itemParams = item.getLayoutParams();
+
+        friendListParams.height = friendListParams.height - itemParams.height;
+        friendList.removeView(item);
+        friendsOnUi.remove(friendEmail);
+
+        Log.d(TAG,"Removed " + friendEmail + " from friend UI list");
+    }
+
+    /**
+     * Add an item (a pending friend) to the pending friend list
+     * @param  friendEmail the friend being added
+     */
+    private void addPendingFriendToList(String friendEmail){
+        LinearLayout pendingFriendList = findViewById(R.id.pending_list);
+        ViewGroup.LayoutParams friendListParams = pendingFriendList.getLayoutParams();
+        LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.pending_list_item, pendingFriendList, false);
+        ViewGroup.LayoutParams itemParams = item.getLayoutParams();
+
+        Button hist_button = item.findViewById(R.id.pending_hist_button);
+        ImageButton remove_button = item.findViewById(R.id.pending_decline_button);
+        hist_button.setText(cloud.getUserName(friendEmail));
+
+        // remove friend
+        remove_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                friendManager.removePendingFriend(friendEmail);
+                removePendingFriendFromList(friendEmail);
+            }
+        });
+
+        friendListParams.height = friendListParams.height + itemParams.height;
+        pendingFriendList.addView(item);
+        pendingFriendList.setLayoutParams(friendListParams);
+
+        pendingFriendsOnUi.put(friendEmail, item);
+
+        Log.d(TAG,"Added " + friendEmail + " to pending friend UI list");
+    }
+
+    /**
+     * remove a pending friend from the pending friend list
+     * @param friendEmail
+     */
+    private void removePendingFriendFromList(String friendEmail){
+        LinearLayout friendList = findViewById(R.id.pending_list);
+        ViewGroup.LayoutParams friendListParams = friendList.getLayoutParams();
+        LinearLayout item = pendingFriendsOnUi.get(friendEmail);
+        ViewGroup.LayoutParams itemParams = item.getLayoutParams();
+
+        friendListParams.height = friendListParams.height - itemParams.height;
+        friendList.removeView(item);
+        pendingFriendsOnUi.remove(friendEmail);
+
+        Log.d(TAG,"Removed " + friendEmail + " from pending friend UI list");
+    }
+
+    /**
+     * Add an item (a friend request) to the friend request list
+     */
+    private void addRequestedFriendToList(String friendEmail){
+        LinearLayout friendList = findViewById(R.id.requested_list);
+        ViewGroup.LayoutParams friendListParams = friendList.getLayoutParams();
+        LinearLayout item = (LinearLayout) getLayoutInflater().inflate(R.layout.requested_list_item, friendList, false);
+
+        pendingRequestsOnUi.put(friendEmail, item);
+
+        Button hist_button = item.findViewById(R.id.requested_hist_button);
+        ImageButton accept_button = item.findViewById(R.id.requested_accept_button);
+        ImageButton remove_button = item.findViewById(R.id.requested_decline_button);
+        hist_button.setText(cloud.getUserName(friendEmail));
+        ViewGroup.LayoutParams itemParams = item.getLayoutParams();
+
+        // accept request
+        accept_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                friendManager.acceptFriendRequest(friendEmail);
+                removePendingRequestFromList(friendEmail);
+            }
+        });
+        // remove friend
+        remove_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                friendManager.denyFriendRequest(friendEmail);
+                removePendingRequestFromList(friendEmail);
+            }
+        });
+
+        friendListParams.height = friendListParams.height + itemParams.height;
+        friendList.addView(item);
+        friendList.setLayoutParams(friendListParams);
+
+        Log.d(TAG,"Added " + friendEmail + " to friend requests UI list");
+    }
+
+    /**
+     * remove a friend request from the friend request list
+     * @param friendEmail
+     */
+    private void removePendingRequestFromList(String friendEmail){
+        LinearLayout friendList = findViewById(R.id.requested_list);
+        ViewGroup.LayoutParams friendListParams = friendList.getLayoutParams();
+        LinearLayout item = pendingRequestsOnUi.get(friendEmail);
+        ViewGroup.LayoutParams itemParams = item.getLayoutParams();
+
+        friendListParams.height = friendListParams.height - itemParams.height;
+        friendList.removeView(item);
+        pendingRequestsOnUi.remove(friendEmail);
+
+        Log.d(TAG,"Removed " + friendEmail + " from friend requests UI list");
+    }
 
     /**
      * Displays step history
@@ -166,6 +342,17 @@ public class ShowFriendsActivity extends AppCompatActivity {
     private void launchHistory() {
         finish();
         Intent intent = new Intent(this, ShowHistoryActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Displays chat
+     */
+    private void launchChat(String friendEmail) {
+        finish();
+        Intent intent = new Intent(this, ChatActivity.class)
+                .putExtra("from", user.getUserEmail())
+                .putExtra("to", friendEmail);
         startActivity(intent);
     }
 
@@ -188,8 +375,8 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String email = dialogInput.getText().toString();
-                addFriendToList(email);
-                friendManager.addFriend(email);
+                if(!cloud.areFriends(email))
+                    friendManager.addFriend(email);
             }
         });
 
@@ -203,6 +390,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
 
         builder.show();
     }
+
 
     /**
      * Saves the user settings and history into sharedPreferences
