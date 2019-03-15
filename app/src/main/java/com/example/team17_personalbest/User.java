@@ -1,12 +1,5 @@
 package com.example.team17_personalbest;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-
 import com.example.team17_personalbest.Step.Day;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.StepHistory;
@@ -119,7 +112,6 @@ public class User extends Observable implements StepSubject, TimeSubject {
      */
     public boolean reachedGoal(){
         return totalDailySteps >= goal;
-		sendNotification();
     }
 
 
@@ -196,19 +188,6 @@ public class User extends Observable implements StepSubject, TimeSubject {
     public void setHasBeenEncouragedToday(boolean hasBeenEncouragedToday) {
         this.hasBeenEncouragedToday = hasBeenEncouragedToday;
     }
-	
-	public void sendNotification() {
-		NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		NotificationChannel channel = new NotificationChannel("package com.example.team17_personalbest", "Goal", NotificationManager.IMPORTANCE_DEFAULT);
-		manager.createNotificationChannel(channel);
-		Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-        Notification.Builder builder = new Notification.Builder(this)
-                .setContentTitle("Goal Reached")
-                .setContentText("Congratulations, you reached your step goal!")
-                .setContentIntent(pendingIntent);
-        manager.notify(0, builder.build());
-	}
 
     @Override
     public void addStepObserver(StepObserver observer) {

@@ -1,4 +1,3 @@
-
 package com.example.team17_personalbest.Chat;
 
 import android.content.Intent;
@@ -15,8 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
-import com.example.team17_personalbest.Notifications;
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
+import com.example.team17_personalbest.Notifications.FirebaseMessagingAdapter;
+import com.example.team17_personalbest.Notifications.INotification;
+import com.example.team17_personalbest.Notifications.NotificationFactory;
 import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.ShowHistoryActivity;
 import com.google.firebase.firestore.CollectionReference;
@@ -57,7 +58,6 @@ public class ChatActivity extends AppCompatActivity {
         to = getIntent().getStringExtra("to");
 
         setupChat();
-        setupMessaging();
         subscribeToNotificationsTopic();
         setupNavigation();
 
@@ -106,7 +106,7 @@ public class ChatActivity extends AppCompatActivity {
     private void subscribeToNotificationsTopic() {
         //TODO: Add firebase notifications cloud function (not in java code)
 		NotificationFactory notificationFactory = NotificationFactory.getInstance();
-        String key = getIntent().getStringExtra(NOTIFICATION_SERVICE_EXTRA);
+        String key = getIntent().getStringExtra("Notification Service");
         INotification inote = notificationFactory.getOrDefault(key, FirebaseMessagingAdapter::getInstance);
         inote.subscribeToTopic(DOCUMENT_KEY, task -> {
                             String msg = "Subscribed to notifications";
@@ -125,12 +125,6 @@ public class ChatActivity extends AppCompatActivity {
             chat = new CollectionReferenceAdapter(firebase.getChats(from, to)[0]);
             firebase.getUsersFromDB();
             initMessageUpdateListener();
-        }
-    }
-
-    public void setupMessaging(){
-        if (firebaseMessaging == null){
-            firebaseMessaging = new FirebaseMessagingAdapter(FirebaseMessaging.getInstance());
         }
     }
 

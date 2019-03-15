@@ -1,5 +1,11 @@
 package com.example.team17_personalbest.Notifications;
 
+import android.util.Log;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.example.team17_personalbest.MainActivity;
+
 public class NotificationFactory {
     private static NotificationFactory instance;
 
