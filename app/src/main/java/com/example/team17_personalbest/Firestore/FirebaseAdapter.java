@@ -60,7 +60,6 @@ public class FirebaseAdapter implements IDatabase {
         friends = new ArrayList<>();
         pendingRequests = new ArrayList<>();
         pendingFriends = new ArrayList<>();
-        this.getUsersFromDB();
     }
 
     /**

@@ -55,6 +55,7 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_friend_hist);
 
         FirebaseAdapter cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
+        cloud.getUsersFromDB();
         friendEmail = getIntent().getStringExtra("friend_email");
         friendName = getIntent().getStringExtra("friend_name");
         userEmail = getIntent().getStringExtra("user_email");
