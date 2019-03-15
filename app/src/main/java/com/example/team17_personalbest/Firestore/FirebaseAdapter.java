@@ -3,6 +3,7 @@ package com.example.team17_personalbest.Firestore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.team17_personalbest.Step.StepHistory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -12,10 +13,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -31,6 +34,7 @@ public class FirebaseAdapter implements IDatabase {
     private String USER_ID = "u_id";
     private String USER_NAME = "u_name";
     private String USER_EMAIL = "u_email";
+    private String USER_STEPHIST = "u_stephist";
 
     private String USER_COLLECTION = "users";
     private String PENDING_COLLECTION = "pending";
@@ -323,6 +327,52 @@ public class FirebaseAdapter implements IDatabase {
         return false;
     }
 
+    @Override
+    public void saveStepHistory(String userEmail, String stepHistory){
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                db.collection(USER_COLLECTION)
+                                        .document(userEmail)
+                                        .update(USER_STEPHIST, stepHistory);
+                                Log.d(TAG, "Updated " + userEmail + " step history");
+                            }else{
+                                Log.d(TAG, "User does not exist");
+                            }
+                        } else {
+                            Log.e(TAG, "Failed with: ", task.getException());
+                        }
+                    }
+                });
+
+    }
+
+    @Override
+    public void getStepHistory(String userEmail, StepHistory stepHistory) {
+        db.collection(USER_COLLECTION)
+                .document(userEmail)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            Gson gson = new Gson();
+                            stepHistory.setHist(gson.fromJson((String)documentSnapshot.get(USER_STEPHIST), StepHistory.class));
+                            Log.d(TAG, userEmail + " step history gotten");
+                        }else{
+                            Log.e(TAG, "Failed with: ", task.getException());
+                        }
+                    }
+                });
+    }
+
     /**
      * Gets the collection of chat messages between userID1 and userID2
      * @param userID1
@@ -349,16 +399,16 @@ public class FirebaseAdapter implements IDatabase {
 
     /**
      * Adds a message into the chats stored under each user
-     * @param userID1 the user sending the message
-     * @param userID2 the user receiving the message
+     * @param user1Email the user sending the message
+     * @param user2Email the user receiving the message
      * @param text the message
      */
-    public Task<DocumentReference> sendMessage(String userID1, String userID2, String text){
+    public Task<DocumentReference> sendMessage(String user1Email, String user2Email, String text){
         //TODO: Add cloud function for timestamps (not here in java code)
         HashMap<String, String> message = new HashMap<>();
-        message.put(FROM_KEY, userID1);
+        message.put(FROM_KEY, getUserName(user1Email));
         message.put(TEXT_KEY, text);
-        CollectionReference[] chats = getChats(userID1, userID2);
+        CollectionReference[] chats = getChats(user1Email, user2Email);
         Task<DocumentReference> task = null;
         for (CollectionReference chat : chats) {
             task = chat.add(message)

@@ -54,8 +54,10 @@ public class MainActivity extends AppCompatActivity {
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "MainActivity";
     //private TextView mTextMessage;
-    private User user;
+    public User user;
     private FitnessService fitnessService;
+    public AlertDialog.Builder builder;
+    public AlertDialog dialog;
 
     private GoogleSignInAccount account;
     private GoogleSignInClient mGoogleSignInClient;
@@ -364,7 +366,7 @@ public class MainActivity extends AppCompatActivity {
      * Creates a popup that lets the user set a new goal
      */
     public void displayNewGoalPrompt() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder = new AlertDialog.Builder(this);
         builder.setTitle("Set Goal");
 
         // Set up user input
@@ -396,6 +398,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        dialog = builder.create();
         builder.show();
     }
 
