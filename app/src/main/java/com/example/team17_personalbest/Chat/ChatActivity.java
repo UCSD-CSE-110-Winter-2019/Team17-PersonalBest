@@ -1,24 +1,29 @@
 package com.example.team17_personalbest.Chat;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
+import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.R;
-import com.google.firebase.firestore.CollectionReference;
+import com.example.team17_personalbest.Step.ShowHistoryActivity;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
     String TAG = ChatActivity.class.getSimpleName();
@@ -35,26 +40,25 @@ public class ChatActivity extends AppCompatActivity {
     public String to;
     public boolean test = false;
     public MyFirebaseMessaging firebaseMessaging;
-    public EditText nameView;
     public FirebaseAdapter firebase;
+    public ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        //TODO: Get usernames
-        from = "user1";
-        to = "user2";
+        scrollView = findViewById(R.id.scroll_view);
+
+        from = getIntent().getStringExtra("from");
+        to = getIntent().getStringExtra("to");
 
         setupChat();
         setupMessaging();
         subscribeToNotificationsTopic();
+        setupNavigation();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
-
-        nameView = findViewById((R.id.user_name));
-        nameView.setText(from);
     }
 
     private void sendMessage() {
@@ -113,6 +117,7 @@ public class ChatActivity extends AppCompatActivity {
         if(chat == null && firebase == null) {
             firebase = new FirebaseAdapter(FirebaseFirestore.getInstance());
             chat = new CollectionReferenceAdapter(firebase.getChats(from, to)[0]);
+            firebase.getUsersFromDB();
             initMessageUpdateListener();
         }
     }
@@ -121,5 +126,46 @@ public class ChatActivity extends AppCompatActivity {
         if (firebaseMessaging == null){
             firebaseMessaging = new FirebaseMessagingAdapter(FirebaseMessaging.getInstance());
         }
+    }
+
+    public void setupNavigation(){
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(
+                // Switching between home screen and history
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.navigation_home:
+                                finish();
+                                return true;
+                            case R.id.navigation_history:
+                                launchHistory();
+                                return true;
+                            case R.id.navigation_friends:
+                                launchFriends();
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+    }
+
+    /**
+     * Displays step history
+     */
+    private void launchHistory() {
+        finish();
+        Intent intent = new Intent(this, ShowHistoryActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Displays friend list
+     */
+    private void launchFriends() {
+        finish();
+        Intent intent = new Intent(this, ShowFriendsActivity.class);
+        startActivity(intent);
     }
 }

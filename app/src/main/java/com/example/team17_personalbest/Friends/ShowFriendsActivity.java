@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.example.team17_personalbest.Chat.ChatActivity;
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
 import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.Day;
@@ -185,6 +186,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // go to chat
+                launchChat(friendEmail);
             }
         });
         // remove friend
@@ -339,6 +341,17 @@ public class ShowFriendsActivity extends AppCompatActivity {
     private void launchHistory() {
         finish();
         Intent intent = new Intent(this, ShowHistoryActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Displays chat
+     */
+    private void launchChat(String friendEmail) {
+        finish();
+        Intent intent = new Intent(this, ChatActivity.class)
+                .putExtra("from", user.getUserEmail())
+                .putExtra("to", friendEmail);
         startActivity(intent);
     }
 
