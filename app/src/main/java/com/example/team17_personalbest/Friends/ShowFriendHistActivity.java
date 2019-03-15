@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -41,8 +43,9 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_friend_hist);
 
         FirebaseAdapter cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
-        String friendEmail = getIntent().getStringExtra("email");
-        String friendName = getIntent().getStringExtra("name");
+        String friendEmail = getIntent().getStringExtra("friend_email");
+        String friendName = getIntent().getStringExtra("friend_name");
+        String userEmail = getIntent().getStringExtra("user_name");
 
         TextView name = findViewById(R.id.name);
         name.setText(friendName);
@@ -52,6 +55,7 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         barChart = findViewById(R.id.bar_chart);
         showHistory(friendHistory.getHist(), barChart);
 
+        // Back to friend list
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +63,17 @@ public class ShowFriendHistActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        EditText message = findViewById(R.id.message);
+        String content = message.getText().toString();
+        Button sendMessageButton = findViewById(R.id.send_button);
+        sendMessageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cloud.sendMessage(userEmail,friendEmail, content);
+            }
+        });
+
 
         final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
