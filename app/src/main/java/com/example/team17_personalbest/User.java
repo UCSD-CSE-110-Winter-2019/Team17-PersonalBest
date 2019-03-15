@@ -196,8 +196,11 @@ public class User extends Observable implements StepSubject, TimeSubject {
 		NotificationsManager manager;
 		manager.set_channel_ID("FRIEND_MESSAGE");
 		manager.set_channel_name("Messages");
+<<<<<<< HEAD
 		No
 		manager.createNotificationChannel(
+=======
+>>>>>>> parent of 4584a60... Added some notifications stuff
 		Notification.Builder builder = manager.addNotification("Goal Reached", "Congrats! You reached your step goal!");
 		manager.getManager().notify(new Random().nextInt(), builder.build());
 	}

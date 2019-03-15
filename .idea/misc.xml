@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
 <<<<<<< HEAD
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+=======
+>>>>>>> parent of 4584a60... Added some notifications stuff
 =======
 >>>>>>> parent of 4584a60... Added some notifications stuff
   <component name="NullableNotNullManager">
@@ -10,7 +13,11 @@
     <option name="myNullables">
       <value>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <list size="7">
+=======
+        <list size="10">
+>>>>>>> parent of 4584a60... Added some notifications stuff
 =======
         <list size="10">
 >>>>>>> parent of 4584a60... Added some notifications stuff
@@ -22,6 +29,12 @@
           <item index="5" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
           <item index="6" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+          <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
+          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
+          <item index="9" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableType" />
+>>>>>>> parent of 4584a60... Added some notifications stuff
 =======
           <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
           <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
@@ -33,7 +46,11 @@
     <option name="myNotNulls">
       <value>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <list size="6">
+=======
+        <list size="9">
+>>>>>>> parent of 4584a60... Added some notifications stuff
 =======
         <list size="9">
 >>>>>>> parent of 4584a60... Added some notifications stuff
@@ -44,6 +61,12 @@
           <item index="4" class="java.lang.String" itemvalue="androidx.annotation.NonNull" />
           <item index="5" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNonNull" />
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+          <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
+          <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
+          <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullType" />
+>>>>>>> parent of 4584a60... Added some notifications stuff
 =======
           <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
           <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
@@ -54,7 +77,11 @@
     </option>
   </component>
 <<<<<<< HEAD
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+=======
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+>>>>>>> parent of 4584a60... Added some notifications stuff
 =======
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
 >>>>>>> parent of 4584a60... Added some notifications stuff

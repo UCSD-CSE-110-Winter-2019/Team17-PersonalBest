@@ -14,11 +14,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
+<<<<<<< HEAD
 import com.example.team17_personalbest.Notifications;
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.R;
 import com.example.team17_personalbest.Step.ShowHistoryActivity;
 import com.example.team17_personalbest.R;
+=======
+import com.example.team17_personalbest.R;
+>>>>>>> parent of 4584a60... Added some notifications stuff
 import com.example.team17_personalbest.Notifications;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
