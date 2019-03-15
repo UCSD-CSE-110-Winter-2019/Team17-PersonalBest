@@ -176,8 +176,9 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ShowFriendsActivity.this,ShowFriendHistActivity.class);
-                intent.putExtra("email", friendEmail);
-                intent.putExtra("name", cloud.getUserName(friendEmail));
+                intent.putExtra("friend_email", friendEmail);
+                intent.putExtra("friend_name", cloud.getUserName(friendEmail));
+                intent.putExtra("user_email", user.getUserEmail());
                 startActivity(intent);
             }
         });
