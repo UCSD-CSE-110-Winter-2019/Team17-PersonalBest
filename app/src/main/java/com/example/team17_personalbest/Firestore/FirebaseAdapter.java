@@ -399,16 +399,16 @@ public class FirebaseAdapter implements IDatabase {
 
     /**
      * Adds a message into the chats stored under each user
-     * @param userID1 the user sending the message
-     * @param userID2 the user receiving the message
+     * @param user1Email the user sending the message
+     * @param user2Email the user receiving the message
      * @param text the message
      */
-    public Task<DocumentReference> sendMessage(String userID1, String userID2, String text){
+    public Task<DocumentReference> sendMessage(String user1Email, String user2Email, String text){
         //TODO: Add cloud function for timestamps (not here in java code)
         HashMap<String, String> message = new HashMap<>();
-        message.put(FROM_KEY, userID1);
+        message.put(FROM_KEY, getUserName(user1Email));
         message.put(TEXT_KEY, text);
-        CollectionReference[] chats = getChats(userID1, userID2);
+        CollectionReference[] chats = getChats(user1Email, user2Email);
         Task<DocumentReference> task = null;
         for (CollectionReference chat : chats) {
             task = chat.add(message)
