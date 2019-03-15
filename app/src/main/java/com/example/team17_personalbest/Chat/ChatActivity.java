@@ -108,7 +108,7 @@ public class ChatActivity extends AppCompatActivity {
 		NotificationFactory notificationFactory = NotificationFactory.getInstance();
         String key = getIntent().getStringExtra("Notification Service");
         INotification inote = notificationFactory.getOrDefault(key, FirebaseMessagingAdapter::getInstance);
-        inote.subscribeToTopic(DOCUMENT_KEY, task -> {
+        inote.subscribeToNotificationsTopic(DOCUMENT_KEY, task -> {
                             String msg = "Subscribed to notifications";
                             if (!task.isSuccessful()) {
                                 msg = "Subscribe to notifications failed";
