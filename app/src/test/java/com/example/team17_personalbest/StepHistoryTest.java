@@ -22,21 +22,20 @@ public class StepHistoryTest {
     @Test
     public void test_History(){
         StepHistory stepHistory = new StepHistory();
-        int numDays = 7;
+        int numDays = 28;
 
         for(int i = 0; i < numDays; i++){
-            Day day = new Day((i%7) + 1);
-            day.setPlannedSteps(i+1);
-            day.setNormalSteps(i);
+            Day day = new Day(i);
+            day.setPlannedSteps(i*10);
+            day.setNormalSteps(i*100);
             stepHistory.updateHist(day);
         }
 
         ArrayList<Day> hist = stepHistory.getHist();
-
-        int j = 6;
-        for(int i = numDays; i > numDays-7; i--){
-            assertEquals(hist.get(j).getNormalSteps(), i-1);
-            assertEquals(hist.get(j).getPlannedSteps(), i);
+        int j = numDays-1;
+        for(int i = 0; i < numDays; i++){
+            assertEquals(i*100, hist.get(j).getNormalSteps());
+            assertEquals(i*10, hist.get(j).getPlannedSteps());
             j--;
         }
 
@@ -60,12 +59,12 @@ public class StepHistoryTest {
     @Test
     public void test_setHist(){
         StepHistory stepHistory = new StepHistory();
-        int numDays = 7;
+        int numDays = 28;
 
         for(int i = 0; i < numDays; i++){
-            Day day = new Day((i%7) + 1);
-            day.setPlannedSteps(i+1);
-            day.setNormalSteps(i);
+            Day day = new Day(i);
+            day.setPlannedSteps(i*10);
+            day.setNormalSteps(i*100);
             stepHistory.updateHist(day);
         }
 
@@ -74,11 +73,10 @@ public class StepHistoryTest {
         stepHistory2.setHist(stepHistory.getHist());
 
         ArrayList<Day> hist = stepHistory2.getHist();
-
-        int j = 6;
-        for(int i = numDays; i > numDays-7; i--){
-            assertEquals(hist.get(j).getNormalSteps(), i-1);
-            assertEquals(hist.get(j).getPlannedSteps(), i);
+        int j = numDays-1;
+        for(int i = 0; i < numDays; i++){
+            assertEquals(i*100, hist.get(j).getNormalSteps());
+            assertEquals(i*10, hist.get(j).getPlannedSteps());
             j--;
         }
     }

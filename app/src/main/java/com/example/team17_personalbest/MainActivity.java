@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.Step.Day;
+import com.example.team17_personalbest.Step.GoalNotificationService;
 import com.example.team17_personalbest.Step.HomeDisplayManager;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.ProgressService;
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private int RC_SIGN_IN = 0;
     private FirebaseAdapter db;
+
+    private Intent goalServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,6 +212,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         db = new FirebaseAdapter(firebaseFirestore);
 
+        //Launch goal notifier
+        launchGoalNotificationService();
     }
 
     @Override
@@ -406,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
                     newGoal = Integer.parseInt(dialogInput.getText().toString());
                 }
                 user.setGoal(newGoal);
+                launchGoalNotificationService();
             }
         });
 
@@ -487,5 +493,16 @@ public class MainActivity extends AppCompatActivity {
                 );
     }
 
-
+    private void launchGoalNotificationService(){
+        if (!user.isHasBeenCongratulatedToday()) {
+            if (goalServiceIntent != null)
+                stopService(goalServiceIntent);
+            goalServiceIntent = new Intent(this, GoalNotificationService.class);
+            goalServiceIntent.putExtra("goal", user.getGoal());
+            startService(goalServiceIntent);
+        }
+        else{
+            Log.d("MainActivty", "User has been congratulated already");
+        }
+    }
 }

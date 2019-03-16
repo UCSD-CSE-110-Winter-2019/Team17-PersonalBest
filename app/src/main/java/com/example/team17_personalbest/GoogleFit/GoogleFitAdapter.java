@@ -1,5 +1,6 @@
 package com.example.team17_personalbest.GoogleFit;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.Calendar;
 
@@ -113,6 +115,16 @@ public class GoogleFitAdapter implements FitnessService {
                         Log.d(TAG, "There was a problem getting the step count.", e);
                     }
                 });
+    }
+
+    public static Task<DataSet> getGoogleFitSteps(Context activity){
+        GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
+        if (lastSignedInAccount == null) {
+            return null;
+        }
+
+        return Fitness.getHistoryClient(activity, lastSignedInAccount)
+                .readDailyTotal(DataType.TYPE_STEP_COUNT_DELTA);
     }
 
     @Override
