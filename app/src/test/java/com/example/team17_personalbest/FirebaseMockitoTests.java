@@ -78,8 +78,8 @@ public class FirebaseMockitoTests {
     private FriendManager friendManager;
     private FirebaseAdapter firebaseAdapter;
 
-    private String USER_TEST_EMAIL = "test1@ucsd.edu";
-    private String FRIEND_EMAIL = "test2@ucsd.edu";
+    private String USER_TEST_EMAIL = "test1-ucsd.edu";
+    private String FRIEND_EMAIL = "test2-ucsd.edu";
 
     @Before
     public void setUp(){
