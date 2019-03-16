@@ -23,6 +23,11 @@ public class ProgressService implements Observer {
         this.user = user;
     }
 
+    /**
+     * Observing user steps to decide when to give an encouragement message
+     * @param o
+     * @param arg
+     */
     @Override
     public void update(Observable o, Object arg) {
         final User user = (User) arg;

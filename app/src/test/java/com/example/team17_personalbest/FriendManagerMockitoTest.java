@@ -1,30 +1,20 @@
 package com.example.team17_personalbest;
 
 import android.content.Context;
-import android.content.Intent;
-import android.widget.Button;
 
 import com.example.team17_personalbest.Firestore.FirebaseAdapter;
-import com.example.team17_personalbest.Firestore.IDatabase;
 import com.example.team17_personalbest.Friends.FriendManager;
-import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.Query;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
 import static org.robolectric.shadows.ShadowInstrumentation.getInstrumentation;
 
 

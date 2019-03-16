@@ -28,9 +28,6 @@ import java.util.List;
 public class ChatActivity extends AppCompatActivity {
     String TAG = ChatActivity.class.getSimpleName();
 
-    String COLLECTION_KEY = "chats";
-    String DOCUMENT_KEY = "chat1";
-    String MESSAGES_KEY = "messages";
     String FROM_KEY = "from";
     String TEXT_KEY = "text";
     String TIMESTAMP_KEY = "timestamp";
@@ -55,12 +52,14 @@ public class ChatActivity extends AppCompatActivity {
 
         setupChat();
         setupMessaging();
-        //subscribeToNotificationsTopic();
         setupNavigation();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
     }
 
+    /**
+     * Send a message to firebase
+     */
     private void sendMessage() {
         EditText messageView = findViewById(R.id.text_message);
 
@@ -72,6 +71,9 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Set up function for updating the message history on screen
+     */
     private void initMessageUpdateListener() {
         chat.orderBy(TIMESTAMP_KEY, Query.Direction.ASCENDING)
                 .addSnapshotListener((newChatSnapShot, error) -> {
@@ -99,19 +101,6 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
-//    private void subscribeToNotificationsTopic() {
-//        firebaseMessaging.subscribeToTopic(DOCUMENT_KEY)
-//                .addOnCompleteListener(task -> {
-//                            String msg = "Subscribed to notifications";
-//                            if (!task.isSuccessful()) {
-//                                msg = "Subscribe to notifications failed";
-//                            }
-//                            Log.d(TAG, msg);
-//                            Toast.makeText(ChatActivity.this, msg, Toast.LENGTH_SHORT).show();
-//                        }
-//                );
-//    }
-
     public void setupChat(){
         if(chat == null && firebase == null) {
             firebase = new FirebaseAdapter(FirebaseFirestore.getInstance());
@@ -127,6 +116,9 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * setup navigation menu
+     */
     public void setupNavigation(){
         final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
