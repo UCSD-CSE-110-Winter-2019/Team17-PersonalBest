@@ -42,8 +42,12 @@ public class FriendManager {
      * @param friend friend's email address
      */
     public void removeFriend(String friend){
+        if(this.cloud.getFriends().size() == 1) {
+            this.user.setHasFriends(false);
+        }
         cloud.removeFriend(this.user.getUserEmail(), friend);
         cloud.removeFriend(friend, this.user.getUserEmail());
+
     }
 
     public void removePendingFriend(String friend){
@@ -56,6 +60,9 @@ public class FriendManager {
      * @param friend friend's email address
      */
     public void acceptFriendRequest(String friend){
+        if(!this.user.getHasFriends()) {
+            this.user.setHasFriends(true);
+        }
         cloud.removePendingRequest(this.user.getUserEmail(), friend);
         cloud.addFriend(this.user.getUserEmail(), friend);
         cloud.removePendingFriend(friend, this.user.getUserEmail());

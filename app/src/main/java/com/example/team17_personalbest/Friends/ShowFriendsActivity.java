@@ -351,7 +351,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
     private void launchChat(String friendEmail) {
         finish();
         Intent intent = new Intent(this, ChatActivity.class)
-                .putExtra("from", user.getUserEmail())
+                .putExtra("fromuser", user.getUserEmail())
                 .putExtra("to", friendEmail);
         startActivity(intent);
     }
