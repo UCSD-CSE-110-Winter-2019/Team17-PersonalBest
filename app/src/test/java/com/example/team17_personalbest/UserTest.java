@@ -1,5 +1,6 @@
 package com.example.team17_personalbest;
 
+import com.example.team17_personalbest.Step.Day;
 import com.example.team17_personalbest.Step.PlannedWalk;
 import com.example.team17_personalbest.Step.StepHistory;
 
@@ -7,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import static org.junit.Assert.*;
@@ -81,8 +83,8 @@ public class UserTest {
         user.walk(100, wednesday);
 
         StepHistory stepHistory = user.getStepHistory();
-        assertEquals(stepHistory.getHist().get(2).getNormalSteps(), 100);
-        assertEquals(stepHistory.getHist().get(2).getPlannedSteps(), 150);
+        assertEquals(stepHistory.getHist().get(1).getNormalSteps(), 100);
+        assertEquals(stepHistory.getHist().get(1).getPlannedSteps(), 150);
 
         assertEquals(user.isHasBeenEncouragedToday(), false);
         assertEquals(user.isHasBeenCongratulatedToday(), false);
@@ -109,11 +111,12 @@ public class UserTest {
         user.walk(250, wednesday);
         user.walk(300, thursday);
         StepHistory stepHistory = user.getStepHistory();
+        ArrayList<Day> hist = stepHistory.getHist();
 
-        assertEquals(stepHistory.getHist().get(2).getNormalSteps(), 100);
-        assertEquals(stepHistory.getHist().get(3).getNormalSteps(), 200);
-        assertEquals(stepHistory.getHist().get(3).getPlannedSteps(), 250);
-        assertEquals(stepHistory.getHist().get(4).getNormalSteps(), 300);
+        assertEquals(300, hist.get(0).getNormalSteps());
+        assertEquals(200, hist.get(1).getNormalSteps());
+        assertEquals(100, hist.get(2).getNormalSteps());
+        assertEquals(250, hist.get(1).getPlannedSteps());
         assertEquals(user.getCurrentWalk(), null);
 
     }

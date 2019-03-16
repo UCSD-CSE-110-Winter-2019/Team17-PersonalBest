@@ -19,17 +19,17 @@ public class StepHistory implements StepObserver {
 
     public ArrayList<Day> getHist(){
         ArrayList<Day> dayList = new ArrayList<>();
-        int i = hist.size() - 1;
+
         for(int x = 0; x < 28; x++){
             dayList.add(new Day(x + 1));
         }
-        while(i < hist.size() && i >= 0){
+        int i = hist.size() - 1;
+        int j = 0;
+        while(j < dayList.size() && i >= 0){
             Day currDay = hist.get(i);
-            dayList.set(currDay.getDay() - 1, currDay);
-            if(currDay.getDay() == Calendar.SUNDAY){ // if Sunday is found, break the loop
-                //break;
-            }
+            dayList.set(j, currDay);
             i--;
+            j++;
         }
 
         return dayList;
@@ -77,8 +77,8 @@ public class StepHistory implements StepObserver {
      */
     public void setHist(ArrayList<Day> stepHistory){
         //if(stepHistory != null) {
-            for(Day day: (ArrayList<Day>) stepHistory){
-                this.hist.add(day);
+            for(int i = stepHistory.size()-1; i >= 0; i--){
+                this.hist.add(stepHistory.get(i));
             }
         //}
     }
