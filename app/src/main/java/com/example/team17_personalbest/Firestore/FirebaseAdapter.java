@@ -77,7 +77,7 @@ public class FirebaseAdapter implements IDatabase {
 
         // Check if user exists and adds it to the database
         db.collection(USER_COLLECTION)
-                .document(email)
+                .document( )
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
