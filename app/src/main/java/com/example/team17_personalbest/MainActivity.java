@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.team17_personalbest.Friends.ShowFriendsActivity;
 import com.example.team17_personalbest.Step.Day;
@@ -43,6 +44,7 @@ import com.google.android.gms.tasks.Task;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import java.util.Calendar;
@@ -206,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         db = new FirebaseAdapter(firebaseFirestore);
+
     }
 
     @Override
@@ -268,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
 //                    user.setHasFriends(true);
 //                }
             }
+            subscribeToNotificationsTopic(account.getEmail());
             Log.w(TAG, "signInResult:Success");
             Log.w(TAG, "Signed in with:" + account.getEmail());
             Log.w(TAG, "User Name:" + account.getDisplayName());
@@ -463,5 +467,25 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ShowFriendsActivity.class);
         startActivity(intent);
     }
+
+    private void subscribeToNotificationsTopic(String userEmail) {
+        char[] chars = userEmail.toCharArray();
+        for(int i = 0 ; i < chars.length; i++){
+            if(chars[i] == '@')
+                chars[i] = '-';
+        }
+        final String email = new String(chars);
+        FirebaseMessaging.getInstance().subscribeToTopic(email)
+                .addOnCompleteListener(task -> {
+                            String msg = "Subscribed to notifications";
+                            if (!task.isSuccessful()) {
+                                msg = "Subscribe to notifications failed";
+                            }
+                            Log.d(TAG, msg);
+                            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        }
+                );
+    }
+
 
 }

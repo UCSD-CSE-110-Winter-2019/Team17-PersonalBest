@@ -70,6 +70,7 @@ public class FirebaseAdapter implements IDatabase {
      */
     @Override
     public void addUser(String uid, String name, String email){
+        final String email1 = changeEmailFormat(email);
         HashMap<String, Object> user = new HashMap<>();
         user.put(USER_ID, uid);
         user.put(USER_NAME, name);
@@ -77,7 +78,7 @@ public class FirebaseAdapter implements IDatabase {
 
         // Check if user exists and adds it to the database
         db.collection(USER_COLLECTION)
-                .document( )
+                .document(email1)
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -88,7 +89,7 @@ public class FirebaseAdapter implements IDatabase {
                             } else {
                                 Log.d(TAG, "User does not exist!");
                                 db.collection(USER_COLLECTION)
-                                        .document(email)
+                                        .document(email1)
                                         .set(user);
                             }
                             getUsersFromDB();
@@ -110,6 +111,7 @@ public class FirebaseAdapter implements IDatabase {
      */
     @Override
     public String getUserName(String userEmail) {
+        userEmail = changeEmailFormat(userEmail);
         if(users.containsKey(userEmail)){
             return users.get(userEmail);
         }
@@ -139,6 +141,7 @@ public class FirebaseAdapter implements IDatabase {
      * @param userEmail the email of the user
      */
     public void getFriendsFromDB(String userEmail){
+        userEmail = changeEmailFormat(userEmail);
         db.collection(USER_COLLECTION)
                 .document(userEmail)
                 .collection(FRIEND_COLLECTION)
@@ -163,6 +166,7 @@ public class FirebaseAdapter implements IDatabase {
      * @param userEmail the email of the user
      */
     public void getPendingFriendsFromDB(String userEmail){
+        userEmail = changeEmailFormat(userEmail);
         db.collection(USER_COLLECTION)
                 .document(userEmail)
                 .collection(PENDING_COLLECTION)
@@ -187,6 +191,7 @@ public class FirebaseAdapter implements IDatabase {
      * @param userEmail the email of the user
      */
     public void getPendingRequestsFromDB(String userEmail){
+        userEmail = changeEmailFormat(userEmail);
         db.collection(USER_COLLECTION)
                 .document(userEmail)
                 .collection(REQUEST_COLLECTION)
@@ -213,6 +218,8 @@ public class FirebaseAdapter implements IDatabase {
      */
     @Override
     public void addFriend(String userEmail, String friendEmail){
+        userEmail = changeEmailFormat(userEmail);
+        friendEmail = changeEmailFormat(friendEmail);
         // add "friend" to friendList of "user"
         HashMap<String, String> friend = new HashMap<>();
         friend.put("status", "friends");
@@ -228,6 +235,8 @@ public class FirebaseAdapter implements IDatabase {
 
     @Override
     public void addPendingFriend(String userEmail, String friendEmail){
+        userEmail = changeEmailFormat(userEmail);
+        friendEmail = changeEmailFormat(friendEmail);
         // add "friend" to pendingFriendList of "user"
         HashMap<String, String> friend = new HashMap<>();
         friend.put("status", "pending");
@@ -241,6 +250,8 @@ public class FirebaseAdapter implements IDatabase {
     }
     @Override
     public void addPendingRequest(String userEmail, String friendEmail){
+        userEmail = changeEmailFormat(userEmail);
+        friendEmail = changeEmailFormat(friendEmail);
         // add "friend" to requestList of "user"
         HashMap<String, String> friend = new HashMap<>();
         friend.put("status", "requested");
@@ -255,6 +266,8 @@ public class FirebaseAdapter implements IDatabase {
     }
     @Override
     public void removeFriend(String userEmail, String friendEmail){
+        userEmail = changeEmailFormat(userEmail);
+        friendEmail = changeEmailFormat(friendEmail);
         // remove "friend" from friendList of "user"
         friends.remove(friendEmail);
         db.collection(USER_COLLECTION)
@@ -267,6 +280,8 @@ public class FirebaseAdapter implements IDatabase {
     }
     @Override
     public void removePendingFriend(String userEmail, String friendEmail){
+        userEmail = changeEmailFormat(userEmail);
+        friendEmail = changeEmailFormat(friendEmail);
         // remove "friend" from pendingFriendList of "user"
         pendingFriends.remove(friendEmail);
         db.collection(USER_COLLECTION)
@@ -278,6 +293,8 @@ public class FirebaseAdapter implements IDatabase {
     }
     @Override
     public void removePendingRequest(String userEmail, String friendEmail){
+        userEmail = changeEmailFormat(userEmail);
+        friendEmail = changeEmailFormat(friendEmail);
         // remove "friend" from requestList of "user"
         pendingRequests.remove(friendEmail);
         db.collection(USER_COLLECTION)
@@ -311,6 +328,7 @@ public class FirebaseAdapter implements IDatabase {
      */
     @Override
     public boolean areFriends(String friendEmail) {
+        friendEmail = changeEmailFormat(friendEmail);
         // Checks if friend is user
         if(!users.containsKey(friendEmail)){
             Log.d(TAG, "User " + friendEmail + " does not exist!");
@@ -330,8 +348,9 @@ public class FirebaseAdapter implements IDatabase {
 
     @Override
     public void saveStepHistory(String userEmail, String stepHistory){
+        final String userEmail1 = changeEmailFormat(userEmail);
         db.collection(USER_COLLECTION)
-                .document(userEmail)
+                .document(userEmail1)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -340,7 +359,7 @@ public class FirebaseAdapter implements IDatabase {
                             DocumentSnapshot document = task.getResult();
                             if (document.exists()) {
                                 db.collection(USER_COLLECTION)
-                                        .document(userEmail)
+                                        .document(userEmail1)
                                         .update(USER_STEPHIST, stepHistory);
                                 //Log.d(TAG, "Updated " + userEmail + " step history");
                             }else{
@@ -356,6 +375,7 @@ public class FirebaseAdapter implements IDatabase {
 
     @Override
     public Task<DocumentSnapshot> getStepHistory(String userEmail) {
+        userEmail = changeEmailFormat(userEmail);
         return db.collection(USER_COLLECTION)
                 .document(userEmail)
                 .get();
@@ -370,6 +390,9 @@ public class FirebaseAdapter implements IDatabase {
      */
     @Override
     public CollectionReference[] getChats(String userEmail1, String userEmail2){
+        userEmail1 = changeEmailFormat(userEmail1);
+        userEmail2 = changeEmailFormat(userEmail2);
+
         CollectionReference[] chats = new CollectionReference[2];
         chats[0] = db.collection(USER_COLLECTION)
                 .document(userEmail1)
@@ -391,6 +414,8 @@ public class FirebaseAdapter implements IDatabase {
      * @param text the message
      */
     public Task<DocumentReference> sendMessage(String user1Email, String user2Email, String text){
+        user1Email = changeEmailFormat(user1Email);
+        user2Email = changeEmailFormat(user2Email);
         HashMap<String, String> message = new HashMap<>();
         message.put(FROM_KEY, getUserName(user1Email));
         message.put(TEXT_KEY, text);
@@ -412,5 +437,14 @@ public class FirebaseAdapter implements IDatabase {
                     });
         }
         return task;
+    }
+
+    private String changeEmailFormat(String email){
+        char[] chars = email.toCharArray();
+        for(int i = 0 ; i < chars.length; i++){
+            if(chars[i] == '@')
+                chars[i] = '-';
+        }
+        return new String(chars);
     }
 }
