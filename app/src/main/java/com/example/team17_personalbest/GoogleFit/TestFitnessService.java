@@ -26,6 +26,7 @@ public class TestFitnessService extends GoogleFitAdapter{
         useGoogleFitData = true;
     }
 
+
     @Override
     public void updateStepCount() {
         if(useGoogleFitData)
