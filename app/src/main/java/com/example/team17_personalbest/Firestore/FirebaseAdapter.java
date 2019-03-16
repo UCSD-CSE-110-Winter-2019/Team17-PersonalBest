@@ -129,7 +129,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!users.containsKey((String) change.getId())) {
                                 users.put((String) change.getId(), (String) change.get(USER_NAME));
-                                //Log.d(TAG, "User " + change.getId() + " added!");
+                                Log.d(TAG, "User " + change.getId() + " added!");
                             }
                         });
                     }
@@ -154,7 +154,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!friends.contains((String) change.getId())) {
                                 friends.add((String) change.getId());
-                                //Log.d(TAG, "Friend " + change.getId() + " added!");
+                                Log.d(TAG, "Friend " + change.getId() + " added!");
                             }
                         });
                     }
@@ -179,7 +179,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!pendingFriends.contains((String) change.getId())) {
                                 pendingFriends.add((String) change.getId());
-                                //Log.d(TAG, "Pending friend " + change.getId() + " added!");
+                                Log.d(TAG, "Pending friend " + change.getId() + " added!");
                             }
                         });
                     }
@@ -204,7 +204,7 @@ public class FirebaseAdapter implements IDatabase {
                         documentChanges.forEach(change -> {
                             if(!pendingRequests.contains((String) change.getId())) {
                                 pendingRequests.add((String) change.getId());
-                                //Log.d(TAG, "Friend request " + change.getId() + " added!");
+                                Log.d(TAG, "Friend request " + change.getId() + " added!");
                             }
                         });
                     }
@@ -212,9 +212,9 @@ public class FirebaseAdapter implements IDatabase {
     }
 
     /**
-     * Update friend information on the database
-     * @param userEmail
-     * @param friendEmail
+     * Update friend information on the database (whole bunch of methods below)
+     * @param userEmail user's email
+     * @param friendEmail friend's email
      */
     @Override
     public void addFriend(String userEmail, String friendEmail){
@@ -346,6 +346,11 @@ public class FirebaseAdapter implements IDatabase {
         return false;
     }
 
+    /**
+     * Save current user's step history on cloud
+     * @param userEmail user's email
+     * @param stepHistory user's step history
+     */
     @Override
     public void saveStepHistory(String userEmail, String stepHistory){
         final String userEmail1 = changeEmailFormat(userEmail);
@@ -361,7 +366,7 @@ public class FirebaseAdapter implements IDatabase {
                                 db.collection(USER_COLLECTION)
                                         .document(userEmail1)
                                         .update(USER_STEPHIST, stepHistory);
-                                //Log.d(TAG, "Updated " + userEmail + " step history");
+                                Log.d(TAG, "Updated " + userEmail + " step history");
                             }else{
                                 Log.d(TAG, "User does not exist");
                             }
@@ -373,6 +378,11 @@ public class FirebaseAdapter implements IDatabase {
 
     }
 
+    /**
+     * Get user's step history
+     * @param userEmail user email
+     * @return a task for getting step history
+     */
     @Override
     public Task<DocumentSnapshot> getStepHistory(String userEmail) {
         userEmail = changeEmailFormat(userEmail);
@@ -383,8 +393,8 @@ public class FirebaseAdapter implements IDatabase {
 
     /**
      * Gets the collection of chat messages between userID1 and userID2
-     * @param userEmail1
-     * @param userEmail2
+     * @param userEmail1 user's email
+     * @param userEmail2 friend's email
      * @return the chats between user1 and user2: the first element is the chat stored under
      *         user1 and the second element is the chat stored under user2
      */
@@ -439,6 +449,12 @@ public class FirebaseAdapter implements IDatabase {
         return task;
     }
 
+    /**
+     * Replace the character '@' in all the email parameters because firebase cloud messaging
+     * doesn't support this character in document names
+     * @param email
+     * @return new string without '@'
+     */
     private String changeEmailFormat(String email){
         char[] chars = email.toCharArray();
         for(int i = 0 ; i < chars.length; i++){

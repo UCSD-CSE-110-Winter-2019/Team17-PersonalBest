@@ -56,7 +56,6 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "MainActivity";
-    //private TextView mTextMessage;
     public User user;
     private FitnessService fitnessService;
     public AlertDialog.Builder builder;
@@ -88,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // navigation bar controller
-        //mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
                 // Switching between home screen and history
@@ -157,7 +155,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         fitnessService.updateStepCount();
+//                        db.getFriendsFromDB(user.getUserEmail());
+//                        if(!db.getFriends().isEmpty()){
+//                            user.setHasFriends(true);
+//                        }
                         saveUser();
+
                     }
                 });
             }
@@ -192,9 +195,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fitnessService.addSteps(500);
-                System.out.println("user has friend:" +user.getHasFriends());
-                System.out.println("user has been cograt" +user.isHasBeenEncouragedToday());
-
             }
         });
 
@@ -271,10 +271,6 @@ public class MainActivity extends AppCompatActivity {
                 db.addUser(account.getId(), account.getDisplayName(), email);
                 user.setUserEmail(email);
                 user.setUserName(account.getDisplayName());
-//                db.getFriendsFromDB(user.getUserEmail());
-//                if(!db.getFriends().isEmpty()){
-//                    user.setHasFriends(true);
-//                }
             }
             subscribeToNotificationsTopic(account.getEmail());
             Log.w(TAG, "signInResult:Success");
@@ -474,12 +470,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Subscribe to notification of new messages powered by firebase cloud messaging
+     * @param userEmail current user's email
+     */
     private void subscribeToNotificationsTopic(String userEmail) {
+        // make sure that the email doesn't contains '@'
         char[] chars = userEmail.toCharArray();
         for(int i = 0 ; i < chars.length; i++){
             if(chars[i] == '@')
                 chars[i] = '-';
         }
+        // subscribe to changes of current user's chat messages
         final String email = new String(chars);
         FirebaseMessaging.getInstance().subscribeToTopic(email)
                 .addOnCompleteListener(task -> {
@@ -493,6 +495,9 @@ public class MainActivity extends AppCompatActivity {
                 );
     }
 
+    /**
+     * Push a goal notification on user's phone
+     */
     private void launchGoalNotificationService(){
         if (!user.isHasBeenCongratulatedToday()) {
             if (goalServiceIntent != null)

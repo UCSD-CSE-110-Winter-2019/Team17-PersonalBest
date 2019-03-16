@@ -1,4 +1,4 @@
-package com.example.team17_personalbest;
+package com.example.team17_personalbest.Chat;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

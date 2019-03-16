@@ -63,11 +63,13 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         TextView name = findViewById(R.id.name);
         name.setText(friendName);
 
+        // initialize firebase adapter
         if(cloud != null)
             return;
         cloud = new FirebaseAdapter(FirebaseFirestore.getInstance());
         cloud.getUsersFromDB();
 
+        // display the history only when the task of getting history is complete
         Task<DocumentSnapshot> task = cloud.getStepHistory(friendEmail);
         task.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -95,6 +97,7 @@ public class ShowFriendHistActivity extends AppCompatActivity {
             }
         });
 
+        // setting onclick listener for send message button
         EditText message = findViewById(R.id.message);
         Button sendMessageButton = findViewById(R.id.send_button);
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
@@ -110,6 +113,7 @@ public class ShowFriendHistActivity extends AppCompatActivity {
             }
         });
 
+        // setting up navigation menu
         final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
                 // Switching between home screen and history
@@ -133,6 +137,11 @@ public class ShowFriendHistActivity extends AppCompatActivity {
         navigation.setSelectedItemId(R.id.navigation_history);
     }
 
+    /**
+     * Display the given history as a bar chart on screen
+     * @param hist friend's step history
+     * @param barChart barchart object on UI
+     */
     public void showHistory(List<Day> hist, BarChart barChart){
         // Get data from hist
         ArrayList<BarEntry> barEntries = new ArrayList<>();
