@@ -97,7 +97,6 @@ public class ShowFriendsActivity extends AppCompatActivity {
                         cloud.saveStepHistory(user.getUserEmail(), gson.toJson(user.getStepHistory()));
                         friendManager.updateFriends();
                         updateFriendsOnUI();
-                        saveUser();
                     }
                 });
             }
@@ -187,6 +186,7 @@ public class ShowFriendsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // go to chat
+                finish();
                 launchChat(friendEmail);
             }
         });
@@ -392,34 +392,6 @@ public class ShowFriendsActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * Saves the user settings and history into sharedPreferences
-     */
-    public void saveUser() {
-        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        Gson gson = new Gson();
-
-        String stepHist = gson.toJson(user.getStepHistory());
-        String plannedWalk = gson.toJson(user.getCurrentWalk());
-        String friends = gson.toJson(user.getFriends());
-        String pendingFriends = gson.toJson(user.getPendingFriends());
-        String pendingRequests = gson.toJson(user.getPendingRequests());
-        edit.putInt("height", user.getHeight());
-        edit.putInt("goal", user.getGoal());
-        edit.putInt("daily_steps", user.getTotalDailySteps());
-        edit.putBoolean("encouraged", user.isHasBeenEncouragedToday());
-        edit.putBoolean("congratulated", user.isHasBeenCongratulatedToday());
-        edit.putString("username", user.getUserName());
-        edit.putString("useremail", user.getUserEmail());
-        edit.putString("stepHist", stepHist);
-        edit.putString("plannedWalk", plannedWalk);
-        edit.putString("friends", friends);
-        edit.putString("pendingFriends", pendingFriends);
-        edit.putString("pendingRequests", pendingRequests);
-
-        edit.apply();
-    }
 
     /**
      * Loads the user settings and history from sharedPreferences
