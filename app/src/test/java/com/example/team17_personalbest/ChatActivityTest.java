@@ -126,7 +126,7 @@ public class ChatActivityTest {
     @Test
     public void testStringExtras(){
         Intent intent = new Intent(RuntimeEnvironment.application, ChatActivity.class);
-        intent.putExtra("from", "user");
+        intent.putExtra("fromuser", "user");
         intent.putExtra("to", "friend");
         ActivityController<ChatActivity> controller = Robolectric.buildActivity(ChatActivity.class, intent);
         ChatActivity activity = controller.get();
@@ -146,7 +146,7 @@ public class ChatActivityTest {
     @Test
     public void testSendMessage() {
         Intent intent = new Intent(RuntimeEnvironment.application, ChatActivity.class);
-        intent.putExtra("from", "user");
+        intent.putExtra("fromuser", "user");
         intent.putExtra("to", "friend");
         ActivityController<ChatActivity> controller = Robolectric.buildActivity(ChatActivity.class, intent);
         ChatActivity activity = controller.get();
