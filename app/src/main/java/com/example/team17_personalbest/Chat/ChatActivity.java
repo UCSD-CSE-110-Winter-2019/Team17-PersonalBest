@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -42,6 +43,9 @@ public class ChatActivity extends AppCompatActivity {
     public MyFirebaseMessaging firebaseMessaging;
     public FirebaseAdapter firebase;
     public ScrollView scrollView;
+    public Button sendButton;
+    public EditText messageView;
+    public TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,9 @@ public class ChatActivity extends AppCompatActivity {
         setupNavigation();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
+        sendButton = findViewById(R.id.btn_send);
+        messageView = findViewById(R.id.text_message);
+        textView = findViewById(R.id.chat);
     }
 
     private void sendMessage() {
