@@ -50,7 +50,7 @@ public class ChatActivity extends AppCompatActivity {
 
         scrollView = findViewById(R.id.scroll_view);
 
-        from = getIntent().getStringExtra("from");
+        from = getIntent().getStringExtra("fromuser");
         to = getIntent().getStringExtra("to");
 
         setupChat();
@@ -99,19 +99,18 @@ public class ChatActivity extends AppCompatActivity {
                 });
     }
 
-    private void subscribeToNotificationsTopic() {
-        //TODO: Add firebase notifications cloud function (not in java code)
-        firebaseMessaging.subscribeToTopic(DOCUMENT_KEY)
-                .addOnCompleteListener(task -> {
-                            String msg = "Subscribed to notifications";
-                            if (!task.isSuccessful()) {
-                                msg = "Subscribe to notifications failed";
-                            }
-                            Log.d(TAG, msg);
-                            Toast.makeText(ChatActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        }
-                );
-    }
+//    private void subscribeToNotificationsTopic() {
+//        firebaseMessaging.subscribeToTopic(DOCUMENT_KEY)
+//                .addOnCompleteListener(task -> {
+//                            String msg = "Subscribed to notifications";
+//                            if (!task.isSuccessful()) {
+//                                msg = "Subscribe to notifications failed";
+//                            }
+//                            Log.d(TAG, msg);
+//                            Toast.makeText(ChatActivity.this, msg, Toast.LENGTH_SHORT).show();
+//                        }
+//                );
+//    }
 
     public void setupChat(){
         if(chat == null && firebase == null) {

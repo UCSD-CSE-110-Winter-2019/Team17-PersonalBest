@@ -31,10 +31,18 @@ exports.sendChatNotifications = functions.firestore
      const document = snap.exists ? snap.data() : null;
 
      if (document) {
+
        var message = {
-         notification: {
-           title: document.from + ' sent you a message',
-           body: document.text
+         android: {
+           notification: {
+             title: document.from + ' sent you a message',
+             body: document.text,
+             clickAction: 'ACTIVITY_CHAT'
+           },
+           'data': {
+              'fromuser': context.params.userId,
+              'to': context.params.friendId
+            }
          },
          topic: context.params.userId
        };

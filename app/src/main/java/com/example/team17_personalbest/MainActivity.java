@@ -192,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fitnessService.addSteps(500);
+                System.out.println("user has friend:" +user.getHasFriends());
+                System.out.println("user has been cograt" +user.isHasBeenEncouragedToday());
+
             }
         });
 
@@ -257,9 +260,21 @@ public class MainActivity extends AppCompatActivity {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             if(db != null){
-                db.addUser(account.getId(), account.getDisplayName(), account.getEmail());
-                user.setUserEmail(account.getEmail());
+
+                char[] chars = account.getEmail().toCharArray();
+                for(int i = 0 ; i < chars.length; i++){
+                    if(chars[i] == '@')
+                        chars[i] = '-';
+                }
+                final String email =new String(chars);
+
+                db.addUser(account.getId(), account.getDisplayName(), email);
+                user.setUserEmail(email);
                 user.setUserName(account.getDisplayName());
+//                db.getFriendsFromDB(user.getUserEmail());
+//                if(!db.getFriends().isEmpty()){
+//                    user.setHasFriends(true);
+//                }
             }
             subscribeToNotificationsTopic(account.getEmail());
             Log.w(TAG, "signInResult:Success");
